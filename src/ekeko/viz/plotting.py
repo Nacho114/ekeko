@@ -7,6 +7,7 @@ A small library to plot financial stock data using Plotly.
 import plotly.graph_objects as go
 import plotly.express as px
 from plotly.subplots import make_subplots
+import pandas as pd
 
 # Configuration section for colors and styling
 COLORS = {
@@ -56,7 +57,8 @@ def add_volume(fig, stock_df):
 
     fig.add_trace(
         go.Bar(
-            x=stock_df.index, y=stock_df['Volume'],
+            x=stock_df.index,
+            y=stock_df['Volume'],
             marker_color=colors,
             marker_line_width=0,
             name='Volume',
@@ -102,10 +104,10 @@ def add_candlestick(fig, stock_df):
     fig.update_layout(xaxis_rangeslider_visible=False)
     return fig
 
-def add_transactions(fig, buysell_df):
+def add_transactions(fig, transactions):
     """Add buy/sell markers to the plot."""
-    buys = buysell_df[buysell_df['size'] > 0]
-    sells = buysell_df[buysell_df['size'] < 0]
+    buys = transactions[transactions['size'] > 0]
+    sells = transactions[transactions['size'] < 0]
     
     fig.add_trace(
         go.Scatter(
@@ -143,13 +145,13 @@ def add_transactions(fig, buysell_df):
     
     return fig
 
-def add_scatter(fig, dates, values, name, color, visible='legendonly'):
+def add_scatter(fig, df, color, visible='legendonly'):
     """Add scatter plot to the figure."""
     fig.add_trace(
         go.Scatter(
-            x=dates,
-            y=values,
-            name=name,
+            x=df.index,
+            y=df,
+            name=df.name,
             line=dict(color=color, width=2),
             visible=visible,
             hoverinfo='none',
@@ -157,43 +159,50 @@ def add_scatter(fig, dates, values, name, color, visible='legendonly'):
     )
     return fig
 
-def plot(stock_df, other_dfs=None, transactions=None, title="110"):
+def plot(stock_df: pd.DataFrame, other_dfs: list[pd.DataFrame] | None = None, transactions: pd.DataFrame | None = None, title="110"):
     """Plot stock data with additional curves and buy/sell markers."""
-    plot_df = stock_df.copy()
-    plot_df.index = plot_df.index.strftime('%Y-%m-%d')
     fig = init_stock_plot(title)
 
-    fig = add_candlestick(fig, plot_df)
-    
-    fig = add_scatter(fig, plot_df.index, plot_df['Close'], 'close', 'blue', 'legendonly')
+    ## ---------------------------------------------------------
+    # Format time ----------------------------------------------
+    ## ---------------------------------------------------------
 
-    curve_colors = ['yellow', 'cyan', 'magenta']
+    stock_df = stock_df.copy()
+    stock_df.index = stock_df.index.strftime('%Y-%m-%d')
+    
+    tmp_other_dfs = []
+    if other_dfs:
+        for other_df in other_dfs:
+            other_df = other_df.copy()
+            other_df.index = other_df.index.strftime('%Y-%m-%d')
+            tmp_other_dfs.append(other_df)
+    other_dfs = tmp_other_dfs
+    
+    if transactions is not None:
+        transactions = transactions.copy()
+        transactions.index = transactions.index.strftime('%Y-%m-%d')
+
+    ## ---------------------------------------------------------
+    ## ---------------------------------------------------------
+    ## ---------------------------------------------------------
+
+    fig = add_candlestick(fig, stock_df)
+    
+    close_df = stock_df['Close']
+    close_df.name = stock_df['Close'].name
+    fig = add_scatter(fig, close_df, 'blue', 'legendonly')
+
+    curve_colors = ['yellow', 'cyan', 'magenta', 'orange']
     if other_dfs:
         for idx, other_df in enumerate(other_dfs):
             color_index = idx % len(curve_colors)
-            other_df.index = other_df.index.strftime('%Y-%m-%d')
-            fig = add_scatter(fig, other_df.index, other_df, other_df.name, curve_colors[color_index])
+            fig = add_scatter(fig, other_df, curve_colors[color_index])
 
-    fig = add_volume(fig, plot_df)
+    fig = add_volume(fig, stock_df)
 
     if transactions is not None:
-        transactions.index
-        transactions.index = transactions.index.strftime('%Y-%m-%d')
         fig = add_transactions(fig, transactions)
         
-    return fig
-
-def plot_different_stocks(stocks, price_type, title):
-    """Plot different stocks on a single plot."""
-    fig = init_stock_plot(title)
-
-    curve_colors = ['blue', 'yellow', 'cyan', 'magenta']
-    for idx, stock in enumerate(stocks):
-        color_index = idx % len(curve_colors)
-        dates = stock['df'].index.strftime('%Y-%m-%d')
-        values = stock['df'][price_type]
-        fig = add_scatter(fig, dates, values, stock['symbol'], curve_colors[color_index], visible=True)
-
     return fig
 
 def scatter(x, y, labels, title):

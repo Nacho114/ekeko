@@ -1,1 +1,1 @@
-from .plotting import plot, plot_different_stocks, scatter
+from .plotting import plot, scatter
