@@ -44,4 +44,4 @@ buys = transactions[transactions['size'] > 0]
 sells = transactions[transactions['size'] < 0]
 
 fig = ekeko.viz.plot(stock_df, other_dfs=other_dfs, transactions=transactions)
-fig.show()
+# fig.show()

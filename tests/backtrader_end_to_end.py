@@ -51,7 +51,7 @@ ekeko_cerebro.cerebro.broker.setcash(2000.0)
 for ticker, stock_df in stock_dfs.items():
     ekeko_cerebro.adddata(stock_df, name=ticker)
 
-ekeko_cerebro.addstrategy(EvenOddStrategy)
+ekeko_cerebro.cerebro.addstrategy(EvenOddStrategy)
 
 results, analysis_results = ekeko_cerebro.run()
 
