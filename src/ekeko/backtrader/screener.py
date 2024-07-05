@@ -12,6 +12,7 @@ def screener(ticker: str, marketCapMin: int = 0, marketCapMax: int = sys.maxsize
         return False
 
     volume = stock_info['volume']
+    print(volume)
     if volume < volumeMin:
         return False
 

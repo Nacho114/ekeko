@@ -1,23 +1,20 @@
 import ekeko
-import yfinance as yf
 
-def test_screener():
+def test_screener_without_params():
 
-    ticker = 'AA'
-
-    stock = yf.Ticker(ticker)
-
-    stock_info = stock.get_info()
-
-    marketCap = stock_info['marketCap']
-    volume = stock_info['volume']
-
-    print(f'Market cap {marketCap}')
-    print(f'Volume {marketCap}')
-
-    passes_screener = ekeko.backtrader.screener(ticker)
-    print(passes_screener)
-    import sys
-    print(sys.maxsize)
-
+    passes_screener = ekeko.backtrader.screener(ticker='AAPL')
     assert passes_screener
+
+marketCapMin = int(2000*1e9)
+marketCapMax = int(9000*1e9)
+volumeMin = int(20*1e6)
+
+def test_screener_with_params():
+
+    passes_screener = ekeko.backtrader.screener(ticker='AAPL', marketCapMin=marketCapMin, marketCapMax=marketCapMax, volumeMin=volumeMin)
+    assert passes_screener
+
+def test_screener_false_with_min_volume_too_high():
+    volumeMinTooHigh = int(1e9)
+    passes_screener = ekeko.backtrader.screener(ticker='AAPL', marketCapMin=marketCapMin, marketCapMax=marketCapMax, volumeMin=volumeMinTooHigh)
+    assert not passes_screener
