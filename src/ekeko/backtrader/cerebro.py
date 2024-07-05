@@ -11,9 +11,6 @@ class EkekoCerebro:
         data = bt.feeds.PandasData(dataname=df) # type: ignore
         self.cerebro.adddata(data, name=name)
 
-    def addstrategy(self, strategy: bt.Strategy):
-        self.cerebro.addstrategy(strategy)
-
     def format_analysis_results(self, results) -> dict:
         transactions = results.analyzers.transactions.get_analysis()
         transactions = _format_transactions(transactions)
