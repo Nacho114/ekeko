@@ -18,11 +18,6 @@ def create_fake_data(prices):
     df['Volume'] = 1000
     return df
 
-stock_dfs = {
-    "STOCK_1": create_fake_data([2, 4, 6, -500, 3, 5]),
-    "STOCK_2": create_fake_data([2, 4, 3, 1])
-}
-
 ###############################
 ### Define Strategy
 ###############################
@@ -45,16 +40,24 @@ class EvenOddStrategy(bt.Strategy):
 ### Run experiment
 ###############################
 
-ekeko_cerebro = ekeko.backtrader.EkekoCerebro()
-ekeko_cerebro.cerebro.broker.setcash(2000.0)
+def test_ekeko_cerebro():
 
-for ticker, stock_df in stock_dfs.items():
-    ekeko_cerebro.adddata(stock_df, name=ticker)
 
-ekeko_cerebro.cerebro.addstrategy(EvenOddStrategy)
+    stock_dfs = {
+        "STOCK_1": create_fake_data([2, 4, 6, -500, 3, 5]),
+        "STOCK_2": create_fake_data([2, 4, 3, 1])
+    }
 
-results, analysis_results = ekeko_cerebro.run()
+    ekeko_cerebro = ekeko.backtrader.EkekoCerebro()
+    ekeko_cerebro.cerebro.broker.setcash(2000.0)
 
-result_analyzer = ekeko.backtrader.EkekoResultAnalyzer(analysis_results)
+    for ticker, stock_df in stock_dfs.items():
+        ekeko_cerebro.adddata(stock_df, name=ticker)
 
-result_analyzer.print()
+        ekeko_cerebro.cerebro.addstrategy(EvenOddStrategy)
+
+        results, analysis_results = ekeko_cerebro.run()
+
+        result_analyzer = ekeko.backtrader.EkekoResultAnalyzer(analysis_results)
+
+        assert result_analyzer is not None
