@@ -2,7 +2,7 @@ import ekeko
 
 def test_stooq_loader():
 
-    root_dir = '/home/nacho/code/ekeko/data/stooq/daily/us/nasdaq stocks'
+    root_dir = 'tests/data_loader_test_data'
     stooq_data = ekeko.dataloader.read_us_stooq_data(root_dir)
 
     ticker = next(iter(stooq_data.keys()))
