@@ -36,7 +36,7 @@
         };
 
      shellHook = ''
-        echo hi
+        echo Welcome to ekeko dev
      '';
 
     };
