@@ -4,20 +4,23 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
-  outputs = {nixpkgs, ...}: let
-    system = "x86_64-linux";
-    #       ↑ Swap it for your system if needed
-    #       "aarch64-linux" / "x86_64-darwin" / "aarch64-darwin"
-    pkgs = nixpkgs.legacyPackages.${system};
-  in {
-    devShells.${system}.default = pkgs.mkShell {
+  outputs =
+    { nixpkgs, ... }:
+    let
+      system = "x86_64-linux";
+      #       ↑ Swap it for your system if needed
+      #       "aarch64-linux" / "x86_64-darwin" / "aarch64-darwin"
+      pkgs = nixpkgs.legacyPackages.${system};
+    in
+    {
+      devShells.${system}.default = pkgs.mkShell {
 
-      packages = [
-        pkgs.python3
-        pkgs.poetry
-      ];
+        packages = [
+          pkgs.python310
+          pkgs.poetry
+        ];
 
-      env = {
+        env = {
           # Workaround in linux: python downloads ELF's that can't find glibc
           # You would see errors like: error while loading shared libraries: name.so: cannot open shared object file: No such file or directory
           LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
@@ -35,10 +38,10 @@
           POETRY_VIRTUALENVS_PREFER_ACTIVE_PYTHON = "true";
         };
 
-     shellHook = ''
-        echo Welcome to ekeko dev
-     '';
+        shellHook = ''
+          echo Welcome to ekeko dev
+        '';
 
+      };
     };
-  };
 }
