@@ -1,5 +1,5 @@
 # Ekeko
 
-## Testing
-
-`pytest` needs to be installed with pip! 
+- `nix develop` -> go into dev env
+- `poetry shell` -> load python env of project
+- `poetry run pytest` -> run tests

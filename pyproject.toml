@@ -1,15 +1,24 @@
-[build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
-
-[project]
+[tool.poetry]
 name = "ekeko"
 version = "0.1.0"
-#requires-python = ">=3.9"
-
-dependencies = [
-    "plotly",
-    "numpy",
-    "pandas",
-    "backtrader"
+description = ""
+authors = ["Nacho114 <17376073+Nacho114@users.noreply.github.com>"]
+readme = "README.md"
+packages = [
+    { include = "ekeko" },
 ]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+numpy = "^2.0.0"
+pandas = "^2.2.2"
+plotly = "^5.22.0"
+backtrader = "^1.9.78.123"
+yfinance = "^0.2.40"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.2.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
