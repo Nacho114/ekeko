@@ -18,6 +18,7 @@ yfinance = "^0.2.40"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.2.2"
+pre-commit = "^3.7.1"
 
 [build-system]
 requires = ["poetry-core"]
