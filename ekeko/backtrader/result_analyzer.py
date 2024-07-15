@@ -12,10 +12,10 @@ class EkekoResultAnalyzer:
         self.positions_value = analysis_result["positionsvalue"]
 
     def print(self):
-        _print_header("Transactions")
-        self.show_transactions()
-        _print_header("Trades")
-        self.show_trades()
+        _print_header("Best trades")
+        print(self.stacked_trades.head())
+        _print_header("Worst trades")
+        print(self.stacked_trades.tail())
         _print_header("Drawdown")
         self.show_drawdown()
         _print_header("Trade Analysis")
