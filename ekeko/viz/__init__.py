@@ -1,1 +1,1 @@
-from .plotting import plot, scatter
+from .plotting import plot, scatter, line
