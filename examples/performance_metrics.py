@@ -49,7 +49,7 @@ if __name__ == "__main__":
 
     stock_dfs = {
         "STOCK_1": create_fake_data([2, 4, 6, -2, -2, 3, 5]),
-        "STOCK_2": create_fake_data([2, 2, 3, 5, 6]),
+        "STOCK_2": create_fake_data([2, 2, 3, 5, 6, 6, 5, 5]),
     }
 
     ekeko_cerebro = ekeko.backtrader.EkekoCerebro()
@@ -65,6 +65,7 @@ if __name__ == "__main__":
 
     positions_value = result_analyzer.positions_value
     stacked_trades = result_analyzer.stacked_trades
+    print(stacked_trades)
 
     # result_analyzer.print()
 

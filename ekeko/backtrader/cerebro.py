@@ -66,7 +66,7 @@ def _stack_trades(trades) -> pd.DataFrame:
     dfs = []
     for ticker, trade in trades.items():
         df = trade.copy()
-        df["ticker"] = ticker
+        df.insert(loc=0, column="ticker", value=ticker)
         dfs.append(df)
 
     stacked_trades = pd.concat(dfs)
