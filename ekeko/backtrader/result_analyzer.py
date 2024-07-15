@@ -6,6 +6,7 @@ class EkekoResultAnalyzer:
         self.analysis_result = analysis_result
         self.transactions = analysis_result["transactions"]
         self.trades = analysis_result["trades"]
+        self.stacked_trades = analysis_result["stacked_trades"]
         self.drawdown_dict = analysis_result["drawdown"]
         self.trade_analysis = analysis_result["trade_analysis"]
         self.positions_value = analysis_result["positionsvalue"]

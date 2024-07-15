@@ -64,6 +64,7 @@ if __name__ == "__main__":
     result_analyzer = ekeko.backtrader.EkekoResultAnalyzer(analysis_results)
 
     positions_value = result_analyzer.positions_value
+    stacked_trades = result_analyzer.stacked_trades
 
     # result_analyzer.print()
 
