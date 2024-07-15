@@ -25,7 +25,6 @@ class EkekoCerebro:
         trades = _format_trade_tracker(trades)
 
         stacked_trades = _stack_trades(trades)
-        print(stacked_trades)
 
         trade_analysis = results.analyzers.tradeanalyzer.get_analysis()
         trade_analysis = _format_trade_analyzer_results(trade_analysis)
