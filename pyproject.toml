@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "ekeko"
+version = "0.1.1"
+description = ""
+authors = ["Nacho114 <17376073+Nacho114@users.noreply.github.com>"]
+readme = "README.md"
+
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pandas = "^2.0.3"
+numpy = "^1.25.2"
+plotly = "^5.15.0"
+yfinance = "^0.2.40"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.8.0"
+pytest = "^8.3.2"
+
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
