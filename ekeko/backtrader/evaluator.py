@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 from ekeko.backtrader.broker import OrderAction, Transaction, Trade
 from ekeko.backtrader.engine import Engine
 from ekeko.core.types import Date, Ticker
@@ -9,7 +8,9 @@ class Evaluator:
 
     def __init__(self, engine: Engine):
         self.account = engine.broker.account
-        self.value_df = self.account.value_df
+        value_df = self.account.value_df.copy()
+        self.__extend_value_df(value_df)
+        self.value_df = value_df
         self.transactions_df = self.__transactions_to_dataframe(
             self.account.transactions
         )
@@ -18,13 +19,12 @@ class Evaluator:
 
     def print_stats(self):
         pd.set_option("display.max_columns", None)
-        print("Values")
+        print("Transactions")
         print(self.value_df)
         print("Transactions")
         print(self.transactions_df)
-        print()
-        print("Trades")
         self.__print_trades()
+        self.__print_portfolio_value()
 
     def get_indicators(self, ticker: Ticker) -> list[pd.Series]:
         indicator = []
@@ -76,9 +76,25 @@ class Evaluator:
 
         return pd.DataFrame(data)
 
+    def __print_portfolio_value(self):
+        print('\nPortfolio\n')
+        last_row = self.value_df.iloc[-1]
+        initial_cash = self.value_df.iloc[0]['cash']
+        final_value = last_row['value']
+        percentage_growth = ((final_value - initial_cash) / initial_cash) * 100
+
+        last_row_dict = last_row.to_dict()
+
+        print(f"initial cash{'':8} {initial_cash:.4f}")
+        for key, value in last_row_dict.items():
+            print(f"{key:20} {value:.4f}")
+
+        print("\nPercentage growth (last value w.r.t initial cash): {:.2f}%\n".format(percentage_growth))
+
     def __print_trades(self):
         df_sorted = self.trades_df.sort_values(by='pnl', ascending=False)
         columns_to_print = ['ticker', 'duration', 'pnl', 'commission']
+        print('\nTrades\n')
         print(df_sorted[columns_to_print])
 
         df = df_sorted
@@ -100,6 +116,7 @@ class Evaluator:
         num_negative = len(negative_pnl)
 
         pain_gain_ratio = avg_positive_pnl / abs(avg_negative_pnl)
+
         print("\nTrade statistics\n")
         print(f"Number of trades: {total_trades}")
         print(f"Average PNL: {avg_pnl:.2f}")
@@ -110,6 +127,11 @@ class Evaluator:
         print(f"Number of Negative PNL Trades: {num_negative}")
         print(f"Pain/Gain Ratio: {pain_gain_ratio:.2f}")
         print()
+
+
+    def __extend_value_df(self, value_df: pd.DataFrame):
+        value_df['value'] = value_df['cash'] + value_df['open_position']
+        value_df['normalized_value'] = value_df['value'] / value_df.iloc[0]['cash']
 
     def __trades_to_dataframe(self, trades: list[Trade]) -> pd.DataFrame:
         def get_duration(start: Date, end: Date):

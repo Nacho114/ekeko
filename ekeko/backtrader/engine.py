@@ -1,6 +1,7 @@
 from typing import Protocol
 import pandas as pd
 
+from ekeko.backtrader.report import Report, ReportBuilder
 from ekeko.core import Ticker, Date
 from ekeko.backtrader.broker import BrokerBuilder, Order, Position, Account
 
@@ -73,7 +74,7 @@ class Engine:
             )
         return orders
 
-    def run(self):
+    def run(self) -> Report:
 
         for date in self.time_index:
             orders = []
@@ -83,3 +84,6 @@ class Engine:
                 orders += new_orders
 
             self.broker.update(orders, date)
+
+        report_builder = ReportBuilder(self.broker.account, self.signal_dfs)
+        return report_builder.build()

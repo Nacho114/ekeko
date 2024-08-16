@@ -95,7 +95,6 @@ if __name__ == "__main__":
 
     stock_dfs = dict()
     tickers = ["GPS", "CAVA", "OTLY"]
-    # tickers = ['GPS']
 
     period = "2y"
     for ticker in tickers:
@@ -110,14 +109,12 @@ if __name__ == "__main__":
     broker_builder = BrokerBuilder(initial_cash, comission, stock_dfs, Slippage())
     engine = Engine(Trader(), Strategy(), broker_builder)
 
-    engine.run()
+    report = engine.run()
+    report.print()
 
-    eval = ekeko.backtrader.evaluator.Evaluator(engine)
-    eval.print_stats()
-
-    ticker = tickers[1]
-    transactions = eval.transactions_for_plotting(ticker)
-    indicators = eval.get_indicators(ticker)
+    ticker = 'GPS'
+    transactions = report.transactions_for_plotting(ticker)
+    indicators = report.get_indicators_for_plotting(ticker)
     fig = ekeko.plotting.plot(
         stock_dfs[ticker], other_dfs=indicators, transactions=transactions, title=ticker
     )
