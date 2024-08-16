@@ -75,5 +75,4 @@ def test_broker_buy():  # Test cases
         broker.update(orders, date)
 
     # print(broker.account.value_df)
-    eval = ekeko.backtrader.evaluator.AccountEvaluator(broker.account)
     # eval.display()

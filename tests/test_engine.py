@@ -110,5 +110,5 @@ def test_engine():  # Test cases
     engine.run()
 
     print(engine.broker.account.value_df)
-    eval = ekeko.backtrader.evaluator.AccountEvaluator(engine.broker.account)
-    eval.display()
+    eval = ekeko.backtrader.evaluator.Evaluator(engine)
+    eval.print_stats()
