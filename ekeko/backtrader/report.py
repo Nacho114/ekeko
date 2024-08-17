@@ -6,7 +6,7 @@ from ekeko.core.types import Date, Ticker, Stock_dfs
 
 import random
 
-from ekeko.plotting.plotting import plot
+from ekeko.plotting.plotting import get_stock_plot_fig, get_equity_curve_fig
 
 
 class ReportBuilder:
@@ -100,8 +100,20 @@ class ReportBuilder:
 
         portfolio['value'] = portfolio['cash'] + portfolio['open_position']
         portfolio['normalized_value'] = portfolio['value'] / portfolio.iloc[0]['cash']
+        portfolio['cummax'] = portfolio['normalized_value'].cummax()
 
         return portfolio
+
+
+    def __add_drawdown_statistics(self, stats: dict[str, float], portfolio: pd.DataFrame):
+        drawdown = portfolio['cummax'] - portfolio['normalized_value']
+        max_drawdown = drawdown.max()
+        stats['max_drawdown'] = max_drawdown
+
+        temp = drawdown[drawdown == 0]
+        periods = (temp.index[1:].to_pydatetime() - temp.index[:-1].to_pydatetime())
+        max_drawdown_duration = periods.max()
+        stats['max_drawdown_duration'] = max_drawdown_duration
 
 
     def __compute_portfolio_statistics(self, portfolio: pd.DataFrame) -> dict[str, float]:
@@ -114,6 +126,10 @@ class ReportBuilder:
         percentage_growth = ((final_value - initial_cash) / initial_cash) * 100
         last_row_dict['percentage_growth'] = percentage_growth
 
+        del last_row_dict['cummax']
+
+        self.__add_drawdown_statistics(last_row_dict, portfolio)
+
         return last_row_dict
 
 
@@ -125,14 +141,14 @@ class ReportBuilder:
 def print_random_quote():
     quotes = [
         "when an inner situation is not made conscious, it happens outside, as Fate. - CJ",
+        "A fool who persists in his folly becomes wise. - Blake",
+        "There is a voice that does not use words. Listen. - Rumi"
         "There is always something trending",
         "Nature does not hurry, yet everything is accomplished. - Lao Tzu",
         "Do not dwell in the past, do not dream of the future, concentrate the mind on the present moment. - Buddha",
         "Silence is the language of God, all else is poor translation. - Rumi",
-        "He who knows others is wise; he who knows himself is enlightened. - Lao Tzu",
         "The quieter you become, the more you can hear. - Ram Dass",
-        "Yesterday I was clever, so I wanted to change the world. Today I am wise, so I am changing myself. - Rumi",
-        "Peace comes from within. Do not seek it without. - Buddha",
+        "The great way is not difficult, for those who do not cling to preferences - HHM"
     ]
     print(random.choice(quotes))
 
@@ -152,7 +168,10 @@ class Report:
 
     def __print_dict(self, dicto: dict[str, float]):
         for key, value in dicto.items():
-            print(f"{key:20} {value:.4f}")
+            if isinstance(value, float):
+                print(f"{key:20} {value:.4f}")
+            else:
+                print(f"{key:20} {value}")
 
     def __print_header(self, header: str):
         print()
@@ -199,7 +218,7 @@ class Report:
         indicator = []
         signal = self.signal_dfs[ticker]
         for column in signal.columns:
-            if column not in ["buy", "sell"]:
+            if column not in ["enter", "exit"]:
                 df = pd.DataFrame({column: signal[column]})
                 df = signal[column].copy()
                 indicator.append(df)
@@ -210,8 +229,13 @@ class Report:
         transactions = self.transactions_for_plotting(ticker)
         indicators = self.get_indicators_for_plotting(ticker)
         stock_df = self.stock_dfs[ticker]
-        fig = plot(
+        fig = get_stock_plot_fig(
             stock_df, other_dfs=indicators, transactions=transactions, title=ticker
         )
+        fig.show()
+
+
+    def plot_equity_curve(self):
+        fig = get_equity_curve_fig(self.portfolio)
         fig.show()
 

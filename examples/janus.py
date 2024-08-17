@@ -113,3 +113,4 @@ if __name__ == "__main__":
     report.print()
 
     report.plot_stock('GPS')
+    report.plot_equity_curve()

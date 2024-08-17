@@ -174,7 +174,7 @@ def add_scatter(fig, df, color, visible="legendonly"):
     return fig
 
 
-def plot(
+def get_stock_plot_fig(
     stock_df: pd.DataFrame,
     other_dfs: list[pd.Series] | None = None,
     transactions: pd.DataFrame | None = None,
@@ -277,3 +277,28 @@ def scatter(x, y, labels, title):
     fig = px.scatter(x=x, y=y, labels=labels, title=title)
 
     return _with_style(fig)
+
+def get_equity_curve_fig(portfolio: pd.DataFrame):
+    fig = init_stock_plot("Equity curve")
+
+    value = portfolio["normalized_value"]
+    fig.add_trace(
+            go.Scatter(
+                x=value.index,
+                y=value,
+                name=value.name,
+            )
+        )
+
+
+    cummax = portfolio["cummax"]
+    fig.add_trace(
+            go.Scatter(
+                x=cummax.index,
+                y=cummax,
+                name=cummax.name,
+            )
+        )
+
+    return fig
+
