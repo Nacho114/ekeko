@@ -212,6 +212,10 @@ class Report:
     def get_indicators_for_plotting(self, ticker: Ticker) -> list[pd.Series]:
         signals = self.signal_dfs[ticker]
         indicators = []
+
+        if 'plot_columns' not in signals.attrs:
+            raise ValueError("plot_columns must be set in the strategy. If no columns are to be plotted, set it to an empty list.")
+
         for i in signals.attrs['plot_columns']:
             indicators.append(signals[i])
 
