@@ -133,11 +133,6 @@ class ReportBuilder:
         return last_row_dict
 
 
-## TODO:
-
-# 1. Get Indicators
-# 2. Get transactions for plotting
-
 def print_random_quote():
     quotes = [
         "when an inner situation is not made conscious, it happens outside, as Fate. - CJ",
@@ -215,15 +210,12 @@ class Report:
         return result_df
 
     def get_indicators_for_plotting(self, ticker: Ticker) -> list[pd.Series]:
-        indicator = []
-        signal = self.signal_dfs[ticker]
-        for column in signal.columns:
-            if column not in ["enter", "exit"]:
-                df = pd.DataFrame({column: signal[column]})
-                df = signal[column].copy()
-                indicator.append(df)
+        signals = self.signal_dfs[ticker]
+        indicators = []
+        for i in signals.attrs['plot_columns']:
+            indicators.append(signals[i])
 
-        return indicator
+        return indicators
 
     def plot_stock(self, ticker: Ticker):
         transactions = self.transactions_for_plotting(ticker)

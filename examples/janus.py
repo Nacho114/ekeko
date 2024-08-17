@@ -82,6 +82,8 @@ class Strategy:
             signal["EMA_short"].shift(1) >= signal["EMA_long"].shift(1)
         )
 
+        signal.attrs['plot_columns'] = ['EMA_short', 'EMA_long']
+
         return signal
 
 
@@ -110,6 +112,7 @@ if __name__ == "__main__":
     engine = Engine(Trader(), Strategy(), broker_builder)
 
     report = engine.run()
+
     report.print()
 
     report.plot_stock('GPS')
