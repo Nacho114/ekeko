@@ -107,8 +107,6 @@ def test_engine():  # Test cases
     broker_builder = BrokerBuilder(initial_cash, comission, stock_dfs, Slippage())
     engine = Engine(Trader(), Strategy(), broker_builder)
 
-    engine.run()
+    report = engine.run()
+    report.print()
 
-    print(engine.broker.account.value_df)
-    eval = ekeko.backtrader.evaluator.Evaluator(engine)
-    eval.print_stats()

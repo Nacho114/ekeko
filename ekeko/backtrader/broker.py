@@ -1,4 +1,4 @@
-from ekeko.core import to_number, Ticker, Number, Date
+from ekeko.core import to_number, Ticker, Number, Date, Stock_dfs
 from enum import Enum
 from dataclasses import dataclass
 import pandas as pd
@@ -70,7 +70,7 @@ class SlippageOnClose:
 
 @dataclass
 class StockDFWrapper:
-    stock_dfs: dict[Ticker, pd.DataFrame]
+    stock_dfs: Stock_dfs
     slippage: Slippage
 
     def has_record(self, order: Order, date: Date) -> bool:
@@ -89,7 +89,7 @@ class OrderProcessor:
 
     def __init__(
         self,
-        stock_dfs: dict[Ticker, pd.DataFrame],
+        stock_dfs: Stock_dfs,
         comission: Number,
         slippage: Slippage,
     ):
@@ -257,7 +257,7 @@ class Broker:
         self,
         account: Account,
         comission: Number,
-        stock_dfs: dict[Ticker, pd.DataFrame],
+        stock_dfs: Stock_dfs,
         slippage: Slippage | None = None,
     ):
         self.account = account
@@ -291,7 +291,7 @@ class Broker:
 class BrokerBuilder:
     initial_cash: Number
     comission: Number
-    stock_dfs: dict[Ticker, pd.DataFrame]
+    stock_dfs: Stock_dfs
     slippage: Slippage | None = None
 
     def build(self, time_index) -> Broker:

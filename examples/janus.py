@@ -30,7 +30,7 @@ class Trader:
         _ = stock_row  # We don't use price action in Market order
         orders = []
 
-        if signal.loc["buy"] and len(open_positions) == 0:
+        if signal.loc["enter"] and len(open_positions) == 0:
 
             # Note, if price tomorrow is different, then the quantity might not
             # be appropriate
@@ -49,7 +49,7 @@ class Trader:
 
             orders.append(order)
 
-        if signal.loc["sell"]:
+        if signal.loc["exit"]:
             for p in open_positions:
                 order = p.get_closing_order(date)
                 orders.append(order)
@@ -75,10 +75,10 @@ class Strategy:
         )
 
         # Generate buy and sell signals
-        signal["buy"] = (signal["EMA_short"] > signal["EMA_long"]) & (
+        signal["enter"] = (signal["EMA_short"] > signal["EMA_long"]) & (
             signal["EMA_short"].shift(1) <= signal["EMA_long"].shift(1)
         )
-        signal["sell"] = (signal["EMA_short"] < signal["EMA_long"]) & (
+        signal["exit"] = (signal["EMA_short"] < signal["EMA_long"]) & (
             signal["EMA_short"].shift(1) >= signal["EMA_long"].shift(1)
         )
 
@@ -112,10 +112,4 @@ if __name__ == "__main__":
     report = engine.run()
     report.print()
 
-    ticker = 'GPS'
-    transactions = report.transactions_for_plotting(ticker)
-    indicators = report.get_indicators_for_plotting(ticker)
-    fig = ekeko.plotting.plot(
-        stock_dfs[ticker], other_dfs=indicators, transactions=transactions, title=ticker
-    )
-    fig.show()
+    report.plot_stock('GPS')

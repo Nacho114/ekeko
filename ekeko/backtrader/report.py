@@ -2,17 +2,20 @@ import pandas as pd
 from dataclasses import dataclass
 
 from ekeko.backtrader.broker import Account, OrderAction, Trade, Transaction
-from ekeko.core.types import Date, Ticker
+from ekeko.core.types import Date, Ticker, Stock_dfs
 
 import random
+
+from ekeko.plotting.plotting import plot
 
 
 class ReportBuilder:
 
-    def __init__(self, account: Account, signal_dfs: dict[Ticker, pd.DataFrame]):
+    def __init__(self, account: Account, signal_dfs: Stock_dfs, stock_dfs: Stock_dfs):
 
         self.account = account
         self.signal_dfs = signal_dfs
+        self.stock_dfs = stock_dfs
 
     def build(self):
 
@@ -28,6 +31,7 @@ class ReportBuilder:
             trade_statistics,
             portfolio,
             portfolio_statistics,
+            self.stock_dfs,
             self.signal_dfs
         )
 
@@ -143,7 +147,8 @@ class Report:
     trades_statistics: dict[str, float]
     portfolio: pd.DataFrame
     portfolio_statistics: dict[str, float]
-    signal_dfs: dict[Ticker, pd.DataFrame]
+    stock_dfs: Stock_dfs
+    signal_dfs: Stock_dfs
 
     def __print_dict(self, dicto: dict[str, float]):
         for key, value in dicto.items():
@@ -155,6 +160,7 @@ class Report:
         print()
 
     def print(self):
+        pd.set_option("display.max_columns", None)
         self.__print_header("Report")
         print_random_quote()
         self.__print_header("Transactions")
@@ -199,3 +205,13 @@ class Report:
                 indicator.append(df)
 
         return indicator
+
+    def plot_stock(self, ticker: Ticker):
+        transactions = self.transactions_for_plotting(ticker)
+        indicators = self.get_indicators_for_plotting(ticker)
+        stock_df = self.stock_dfs[ticker]
+        fig = plot(
+            stock_df, other_dfs=indicators, transactions=transactions, title=ticker
+        )
+        fig.show()
+

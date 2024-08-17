@@ -3,6 +3,7 @@ import pandas as pd
 Number = float
 Date = pd.Timestamp
 Ticker = str
+Stock_dfs = dict[Ticker, pd.DataFrame]
 
 
 def to_number(value) -> Number:
