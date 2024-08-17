@@ -91,7 +91,11 @@ class ReportBuilder:
         trade_statistics['avg_negative_pnl'] = negative_pnl.mean()
         trade_statistics['num_positive'] = len(positive_pnl)
         trade_statistics['num_negative'] = len(negative_pnl)
+
         trade_statistics['pain_gain_ratio'] = trade_statistics['avg_positive_pnl'] / abs(trade_statistics['avg_negative_pnl'])
+
+        pos_to_neg_pnl_ratio = len(positive_pnl) / len(negative_pnl)
+        trade_statistics['avg_pain_gain_ratio'] = trade_statistics['pain_gain_ratio'] * pos_to_neg_pnl_ratio
 
         return trade_statistics
 
