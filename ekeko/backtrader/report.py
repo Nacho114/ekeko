@@ -169,9 +169,6 @@ def print_random_quote():
     print(random.choice(quotes))
 
 
-# Call the function to print a random quote
-
-
 @dataclass
 class Report:
     transactions: pd.DataFrame

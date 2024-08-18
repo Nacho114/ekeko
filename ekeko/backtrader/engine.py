@@ -36,7 +36,6 @@ class Engine:
         self.signal_dfs = self.__init_signal_dfs(self.stock_dfs, strategy)
 
     def __get_timeindex_union(self, stock_dfs: Stock_dfs) -> pd.DatetimeIndex:
-        # Flattening the dictionary by union of indices
         timeindex = pd.DatetimeIndex([])
 
         for df in stock_dfs.values():

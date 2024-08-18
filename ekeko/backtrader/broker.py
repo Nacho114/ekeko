@@ -65,7 +65,7 @@ class Slippage(Protocol):
 class SlippageOnClose:
 
     def compute(self, stock_df_row: pd.DataFrame) -> Number:
-        return stock_df_row.loc["Close"]
+        return to_number(stock_df_row.loc["Close"])
 
 
 @dataclass
