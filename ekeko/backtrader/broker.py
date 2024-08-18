@@ -211,6 +211,8 @@ class Account:
         self.transactions: list[Transaction] = []
         self.tickers: set[Ticker] = set()
 
+        self.last_value_open_position_cache: dict[Ticker, Number]= dict()
+
     def get_cash(self, date: Date) -> Number:
         cash = to_number(self.value_df.loc[date, "cash"])
         return cash
@@ -246,8 +248,14 @@ class Account:
     def __update_open_position(self, order_processor: OrderProcessor, date: Date):
         value_at_date = 0.0
         for p in self.positions:
+            ticker = p.transaction.order.ticker
+            value = 0.0
             if order_processor.stock_dfs.has_record(p.transaction.order, date):
-                value_at_date += order_processor.value_at(p.transaction.order, date)
+                value = order_processor.value_at(p.transaction.order, date)
+                self.last_value_open_position_cache[ticker] = value
+            else:
+                value = self.last_value_open_position_cache.get(ticker, 0.0)
+            value_at_date += value
         self.value_df.loc[date, "open_position"] = value_at_date
 
 
