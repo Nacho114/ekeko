@@ -146,7 +146,7 @@ class ReportBuilder:
 def print_random_quote():
     quotes = [
         "when an inner situation is not made conscious, it happens outside, as Fate. - CJ",
-        "A fool who persists in his folly becomes wise. - Blake",
+        "A fool who persists in his folly becomes wise (or rich?). - Blake",
         "There is a voice that does not use words. Listen. - Rumi"
         "There is always something trending",
         "Nature does not hurry, yet everything is accomplished. - Lao Tzu",
