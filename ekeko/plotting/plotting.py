@@ -278,27 +278,26 @@ def scatter(x, y, labels, title):
 
     return _with_style(fig)
 
+
 def get_equity_curve_fig(portfolio: pd.DataFrame):
     fig = init_stock_plot("Equity curve")
 
     value = portfolio["normalized_value"]
     fig.add_trace(
-            go.Scatter(
-                x=value.index,
-                y=value,
-                name=value.name,
-            )
+        go.Scatter(
+            x=value.index,
+            y=value,
+            name=value.name,
         )
-
+    )
 
     cummax = portfolio["cummax"]
     fig.add_trace(
-            go.Scatter(
-                x=cummax.index,
-                y=cummax,
-                name=cummax.name,
-            )
+        go.Scatter(
+            x=cummax.index,
+            y=cummax,
+            name=cummax.name,
         )
+    )
 
     return fig
-

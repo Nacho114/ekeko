@@ -211,7 +211,7 @@ class Account:
         self.transactions: list[Transaction] = []
         self.tickers: set[Ticker] = set()
 
-        self.last_value_open_position_cache: dict[Ticker, Number]= dict()
+        self.last_value_open_position_cache: dict[Ticker, Number] = dict()
 
     def get_cash(self, date: Date) -> Number:
         cash = to_number(self.value_df.loc[date, "cash"])

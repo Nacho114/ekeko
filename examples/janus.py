@@ -16,6 +16,36 @@ import pandas as pd
 import yfinance as yf
 
 
+class Strategy:
+    def __init__(self):
+        self.short_window = 12
+        self.long_window = 26
+
+    def evaluate(self, stock_df: pd.DataFrame) -> pd.DataFrame:
+        # Initialize signal DataFrame
+        signal = pd.DataFrame(index=stock_df.index)
+
+        # Calculate short and long EMAs and add to signal DataFrame
+        signal["EMA_short"] = (
+            stock_df["Close"].ewm(span=self.short_window, adjust=False).mean()
+        )
+        signal["EMA_long"] = (
+            stock_df["Close"].ewm(span=self.long_window, adjust=False).mean()
+        )
+
+        # Generate buy and sell signals
+        signal["enter"] = (signal["EMA_short"] > signal["EMA_long"]) & (
+            signal["EMA_short"].shift(1) <= signal["EMA_long"].shift(1)
+        )
+        signal["exit"] = (signal["EMA_short"] < signal["EMA_long"]) & (
+            signal["EMA_short"].shift(1) >= signal["EMA_long"].shift(1)
+        )
+
+        signal.attrs["plot_columns"] = ["EMA_short", "EMA_long"]
+
+        return signal
+
+
 class Trader:
 
     def trade(
@@ -57,36 +87,6 @@ class Trader:
         return orders
 
 
-class Strategy:
-    def __init__(self):
-        self.short_window = 12
-        self.long_window = 26
-
-    def evaluate(self, stock_df: pd.DataFrame) -> pd.DataFrame:
-        # Initialize signal DataFrame
-        signal = pd.DataFrame(index=stock_df.index)
-
-        # Calculate short and long EMAs and add to signal DataFrame
-        signal["EMA_short"] = (
-            stock_df["Close"].ewm(span=self.short_window, adjust=False).mean()
-        )
-        signal["EMA_long"] = (
-            stock_df["Close"].ewm(span=self.long_window, adjust=False).mean()
-        )
-
-        # Generate buy and sell signals
-        signal["enter"] = (signal["EMA_short"] > signal["EMA_long"]) & (
-            signal["EMA_short"].shift(1) <= signal["EMA_long"].shift(1)
-        )
-        signal["exit"] = (signal["EMA_short"] < signal["EMA_long"]) & (
-            signal["EMA_short"].shift(1) >= signal["EMA_long"].shift(1)
-        )
-
-        signal.attrs['plot_columns'] = ['EMA_short', 'EMA_long']
-
-        return signal
-
-
 class Slippage:
 
     def compute(self, stock_df_row: pd.DataFrame) -> Number:
@@ -115,5 +115,5 @@ if __name__ == "__main__":
 
     report.print()
 
-    report.plot_stock('GPS')
+    report.plot_stock("GPS")
     report.plot_equity_curve()

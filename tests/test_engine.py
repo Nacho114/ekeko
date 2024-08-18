@@ -15,6 +15,18 @@ from ekeko.core import Ticker, Date, Number
 import pandas as pd
 
 
+class Strategy:
+
+    def evaluate(self, stock_df: pd.DataFrame) -> pd.DataFrame:
+        signal = pd.DataFrame(index=stock_df.index)
+
+        signal["buy"] = stock_df["Close"] == 2
+
+        signal["sell"] = stock_df["Close"] == 3
+
+        return signal
+
+
 class Trader:
 
     def trade(
@@ -54,18 +66,6 @@ class Trader:
                 orders.append(order)
 
         return orders
-
-
-class Strategy:
-
-    def evaluate(self, stock_df: pd.DataFrame) -> pd.DataFrame:
-        signal = pd.DataFrame(index=stock_df.index)
-
-        signal["buy"] = stock_df["Close"] == 2
-
-        signal["sell"] = stock_df["Close"] == 3
-
-        return signal
 
 
 class Slippage:
@@ -109,4 +109,3 @@ def test_engine():  # Test cases
 
     report = engine.run()
     report.print()
-
