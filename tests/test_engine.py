@@ -1,4 +1,3 @@
-import ekeko
 from ekeko.backtrader.broker import (
     Account,
     BrokerBuilder,
