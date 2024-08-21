@@ -123,7 +123,8 @@ class ReportBuilder:
         self, stats: dict[str, float], portfolio: pd.DataFrame
     ):
         drawdown = portfolio["cummax"] - portfolio["normalized_value"]
-        max_drawdown = drawdown.max()
+        normalized_drawdown = drawdown / portfolio["cummax"] 
+        max_drawdown = normalized_drawdown.max()
         stats["max_drawdown"] = max_drawdown
 
         temp = drawdown[drawdown == 0]
