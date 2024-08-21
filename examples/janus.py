@@ -9,12 +9,15 @@ from ekeko.backtrader.broker import (
     Position,
 )
 from ekeko.backtrader.engine import Engine
+from ekeko.backtrader.screener import YfinanceTickerSceener
 from ekeko.data_loader import YfDataset
 
 from ekeko.core import Ticker, Date, Number
 
 import pandas as pd
 import yfinance as yf
+
+from ekeko.data_loader.ticker_loader import TickerList
 
 
 class Strategy:
@@ -94,16 +97,9 @@ class Slippage:
         return stock_df_row.loc["Close"]
 
 
-class TickerLoader:
-
-    def load(self):
-        tickers = ["GPS", "CAVA", "OTLY"]
-        return tickers
-
-
 if __name__ == "__main__":
 
-    dataset = YfDataset(TickerLoader(), "2y")
+    dataset = YfDataset(TickerList(["GPS", "CAVA", "OTLY"]), YfinanceTickerSceener(), "2y")
     dataset.set_cached_tickers(Path("./hello_world.txt"))
     stock_dfs = dataset.load()
 
@@ -115,7 +111,7 @@ if __name__ == "__main__":
 
     report = engine.run()
 
-    # report.print()
+    report.print()
 
-    # report.plot_stock("GPS")
-    # report.plot_equity_curve()
+    report.plot_stock("GPS")
+    report.plot_equity_curve()

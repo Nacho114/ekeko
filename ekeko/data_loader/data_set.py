@@ -1,8 +1,7 @@
 from pathlib import Path
 from alive_progress import alive_bar
-import sys
 
-from ekeko.backtrader.screener import TickerScreener, YfinanceTickerSceener
+from ekeko.backtrader.screener import TickerScreener
 from ekeko.core.types import Stock_dfs
 from ekeko.data_loader.data_loader import DataLoader, YfinanceDataLoader
 from ekeko.data_loader.ticker_loader import TickerLoader, TickerReader
@@ -32,8 +31,9 @@ class Dataset:
         with alive_bar(len(tickers), bar="squares", title="Loading dfs") as bar:
             for ticker in tickers:
                 stock_df = self.data_loader.load(ticker)
-                stock_df = self.data_loader.process(stock_df)
-                stock_dfs[ticker] = stock_df
+                if len(stock_df.index) != 0:
+                    stock_df = self.data_loader.process(stock_df)
+                    stock_dfs[ticker] = stock_df
                 bar()
 
         return stock_dfs
@@ -44,16 +44,12 @@ class YfDataset:
     def __init__(
         self,
         ticker_loader: TickerLoader,
-        durations,
-        marketCapMin: int = 0,
-        marketCapMax: int = sys.maxsize,
-        volumeMin: int = 0,
+        ticker_screener: TickerScreener,
+        period: str,
     ):
         self.ticker_loader = ticker_loader
-        self.ticker_screener = YfinanceTickerSceener(
-            marketCapMin, marketCapMax, volumeMin
-        )
-        self.data_loader = YfinanceDataLoader(durations)
+        self.ticker_screener = ticker_screener
+        self.data_loader = YfinanceDataLoader(period)
         self.dataset = Dataset(
             self.ticker_loader, self.ticker_screener, self.data_loader
         )

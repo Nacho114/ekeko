@@ -14,12 +14,12 @@ class DataLoader(Protocol):
 
 class YfinanceDataLoader:
 
-    def __init__(self, durations):
-        self.durations = durations
+    def __init__(self, period: str):
+        self.period = period
 
     def load(self, ticker: Ticker) -> pd.DataFrame:
         stock = yf.Ticker(ticker)
-        period = self.durations
+        period = self.period
         stock_df = stock.history(period=period)
 
         return stock_df

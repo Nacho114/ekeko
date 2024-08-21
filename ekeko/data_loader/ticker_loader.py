@@ -12,6 +12,13 @@ class TickerLoader(Protocol):
 
     def load(self) -> list[Ticker]: ...
 
+class TickerList:
+
+    def __init__(self, tickers: list[Ticker]):
+        self.tickers = tickers
+
+    def load(self) -> list[Ticker]:
+        return self.tickers
 
 class TickerReader:
 
