@@ -68,6 +68,7 @@ class Trader:
 
             # quantity = account.get_cash(date) * 0.1 / stock_row.loc['Close']
             quantity = 2
+            print(stock_row)
 
             order = Order(
                 InstrumentType.STOCK,

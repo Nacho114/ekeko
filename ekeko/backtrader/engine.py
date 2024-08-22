@@ -63,7 +63,7 @@ class Engine:
         orders = []
         if date in signal_df.index:
             signal = signal_df.loc[date]
-            stock_row = signal_df.loc[date]
+            stock_row = self.stock_dfs[ticker].loc[date]
             open_positions = [
                 p
                 for p in self.broker.account.positions
