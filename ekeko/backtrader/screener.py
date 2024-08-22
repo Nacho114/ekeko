@@ -35,6 +35,11 @@ class YfinanceTickerSceener:
         stock = yf.Ticker(ticker)
         stock_info = stock.get_info()
 
+        keys = ["marketCap", "volume", "firstTradeDateEpochUtc"]
+        for k in keys:
+            if k not in stock_info:
+                return False
+
         marketCap = stock_info["marketCap"]
         if marketCap < self.marketCapMin or marketCap > self.marketCapMax:
             return False
