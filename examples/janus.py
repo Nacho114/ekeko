@@ -66,9 +66,7 @@ class Trader:
             # Note, if price tomorrow is different, then the quantity might not
             # be appropriate
 
-            # quantity = account.get_cash(date) * 0.1 / stock_row.loc['Close']
-            quantity = 2
-            print(stock_row)
+            quantity = account.get_cash(date) * 0.1 / stock_row.loc['Close']
 
             order = Order(
                 InstrumentType.STOCK,
