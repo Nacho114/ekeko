@@ -37,6 +37,9 @@ class YfinanceTickerSceener:
         stock = yf.Ticker(ticker)
         stock_info = stock.get_info()
 
+        if stock_info is None or len(stock_info) == 0:
+            return False
+
         keys = ["marketCap", "volume", "firstTradeDateEpochUtc"]
         for k in keys:
             if k not in stock_info:
