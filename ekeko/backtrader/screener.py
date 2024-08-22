@@ -36,12 +36,22 @@ class YfinanceTickerSceener:
 
         return total_months
 
+    def __get_stock_info(self, ticker) -> dict | None:
+
+        try:
+            stock = yf.Ticker(ticker)
+            stock_info = stock.get_info()
+            return stock_info
+
+        except Exception as e:
+            print(f"An unexpected error occurred for ticker: {ticker}. Error: {e}")
+            return None
+
     def passes_screen(self, ticker: Ticker) -> bool:
 
-        stock = yf.Ticker(ticker)
-        stock_info = stock.get_info()
+        stock_info = self.__get_stock_info(ticker)
 
-        if stock_info is None or len(stock_info) == 0:
+        if stock_info is None:
             return False
 
         keys = ["marketCap", "volume", "firstTradeDateEpochUtc"]
