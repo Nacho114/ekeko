@@ -1,7 +1,9 @@
 from pathlib import Path
 from tqdm.autonotebook import tqdm
+from multiprocess import Pool
 
 from ekeko.backtrader.screener import TickerScreener
+from ekeko.config import config
 import os
 
 from ekeko.core.types import Ticker
@@ -14,13 +16,21 @@ class TickerProcessor:
         self.ticker_screener = ticker_sceener
         self.path: None | Path = None
 
-    def __load(self) -> list[Ticker]:
-        tickers = self.tickers
-        screened_tickers = []
+    def __screen_ticker(self, ticker: Ticker):
+        return ticker if self.ticker_screener.passes_screen(ticker) else None
 
-        for ticker in tqdm(tickers, desc="Applying screener"):
-            if self.ticker_screener.passes_screen(ticker):
-                screened_tickers.append(ticker)
+    def __load(self) -> list[Ticker]:
+
+        with Pool(processes=config.num_processors) as pool:
+            results = list(
+                tqdm(
+                    pool.imap(self.__screen_ticker, self.tickers),
+                    total=len(self.tickers),
+                    desc="Applying screener",
+                )
+            )
+
+        screened_tickers = [ticker for ticker in results if ticker is not None]
 
         return screened_tickers
 

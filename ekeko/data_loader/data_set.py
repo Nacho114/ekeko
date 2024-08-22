@@ -1,5 +1,7 @@
 from pathlib import Path
 from tqdm.autonotebook import tqdm
+from multiprocess import Pool
+from ekeko.config import config
 
 from ekeko.backtrader.screener import TickerScreener
 from ekeko.core.types import Stock_dfs, Ticker
@@ -24,6 +26,14 @@ class Dataset:
     def set_cached_tickers(self, path: Path):
         self.ticker_processor.set_cached(path)
 
+    def __process_ticker(self, ticker):
+        stock_df = self.data_loader.load(ticker)
+        if stock_df is not None:
+            stock_df = self.data_loader.process(stock_df)
+            return ticker, stock_df
+        else:
+            return ticker, None
+
     def load(self) -> Stock_dfs:
 
         tickers = self.ticker_processor.load()
@@ -31,11 +41,18 @@ class Dataset:
 
         stock_dfs = dict()
 
-        for ticker in tqdm(tickers, desc="Loading dfs"):
-            stock_df = self.data_loader.load(ticker)
-            if stock_df is not None:
-                stock_df = self.data_loader.process(stock_df)
-                stock_dfs[ticker] = stock_df
+        with Pool(processes=config.num_processors) as pool:
+            results = list(
+                tqdm(
+                    pool.imap(self.__process_ticker, tickers),
+                    total=len(tickers),
+                    desc="Loading dfs",
+                )
+            )
+
+        for ticker, df in results:
+            if df is not None:
+                stock_dfs[ticker] = df
             else:
                 self.logger.add_ticker_without_df(ticker)
 

@@ -2,6 +2,7 @@ from ekeko.backtrader.screener import YfinanceTickerSceener
 from ekeko.core.types import Ticker
 from ekeko.data_loader import YfDataset
 from pathlib import Path
+import ekeko
 
 import requests
 
@@ -45,8 +46,10 @@ marketCapMax = int(20*1e9)
 volumeMin = int(2*1e5)
 minTimeSinceFirstTrade = 12
 
+ekeko.config.set_num_processors(6)
+
 screener = YfinanceTickerSceener(marketCapMin, marketCapMax, volumeMin, minTimeSinceFirstTrade)
-dataset = YfDataset(tickers, screener, period="2y")
+dataset = YfDataset(tickers[:200], screener, period="2y")
 # dataset.set_cached_tickers(Path(cache_path))
 stock_dfs = dataset.load()
 print(stock_dfs.keys())
