@@ -14,5 +14,5 @@ class Logger:
         self.tickers_without_df.append(ticker)
 
     def print(self):
-        have_df = self.total_number_of_tickers - len(self.tickers_without_df)
+        have_df = self.tickers_that_passed_screen - len(self.tickers_without_df)
         print(f'> Out of {self.total_number_of_tickers} tickers: {self.tickers_that_passed_screen} passed the screener, and from those {have_df} have df.')
