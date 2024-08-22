@@ -88,7 +88,13 @@ class Engine:
             )
 
             with Pool(processes=config.num_processors) as pool:
-                orders = list(pool.imap(get_orders, tickers))
+                orders = list(
+                    tqdm(
+                        pool.imap(get_orders, tickers),
+                        total=len(tickers),
+                        desc=f"Throwing net on {date}",
+                    )
+                )
 
             orders = self.__flatten(orders)
 

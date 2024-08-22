@@ -166,7 +166,7 @@ def print_random_quote():
         "Der Mensch kann zwar tun, was er will, aber er kann nicht wollen, was er will. - Shopenhauer",
         "Tat tvam asi",
         "Brahman == Atman",
-        "古池や蛙飛こむ水のをと - 芭蕉"
+        "古池や蛙飛こむ水のをと - 芭蕉",
     ]
     print(random.choice(quotes))
 
