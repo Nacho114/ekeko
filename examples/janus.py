@@ -99,7 +99,7 @@ class Slippage:
 
 if __name__ == "__main__":
 
-    dataset = YfDataset(TickerList(["GPS", "CAVA", "OTLY"]), YfinanceTickerSceener(), "2y")
+    dataset = YfDataset(TickerList(["GPS", "CAVA", "OTLY"]), YfinanceTickerSceener(), period="2y")
     dataset.set_cached_tickers(Path("./hello_world.txt"))
     stock_dfs = dataset.load()
 

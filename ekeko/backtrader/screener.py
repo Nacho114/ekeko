@@ -13,12 +13,12 @@ class TickerScreener(Protocol):
 class YfinanceTickerSceener:
 
     def __init__(
-        self, marketCapMin: int = 0, marketCapMax: int = sys.maxsize, volumeMin: int = 0, minAgeInMonths: int = 0
+        self, marketCapMin: int = 0, marketCapMax: int = sys.maxsize, volumeMin: int = 0, minTimeSinceFirstTrade: int = 0
     ):
         self.marketCapMin = marketCapMin
         self.marketCapMax = marketCapMax
         self.volumeMin = volumeMin
-        self.minAgeInMonths = minAgeInMonths
+        self.minTimeSinceFirstTrade = minTimeSinceFirstTrade
 
     def __time_passed(self, unix_timestamp) -> int:
         date_time = datetime.datetime.fromtimestamp(unix_timestamp)
@@ -44,8 +44,8 @@ class YfinanceTickerSceener:
             return False
         
         firstTradeDate = stock_info["firstTradeDateEpochUtc"]
-        ageInMonths = self.__time_passed(firstTradeDate)
-        if ageInMonths < self.minAgeInMonths:
+        numberOfMonthsSinceFirstTrade = self.__time_passed(firstTradeDate)
+        if numberOfMonthsSinceFirstTrade < self.minTimeSinceFirstTrade:
             return False
 
         return True
