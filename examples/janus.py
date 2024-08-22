@@ -95,16 +95,16 @@ class Slippage:
 
 if __name__ == "__main__":
 
-    dataset = YfDataset(["GPS", "CAVA", "OTLY"], YfinanceTickerSceener(), period="2y")
-    dataset.set_cached_tickers(Path("./examples/cached/"))
+    dataset = YfDataset(["GPS", "CAVA", "AFJK"], YfinanceTickerSceener(), period="2y")
+    # dataset.set_cached_tickers(Path("./examples/cached/"))
     stock_dfs = dataset.load()
 
     comission = 0.01
     initial_cash = 10000
-    
+
     broker_builder = BrokerBuilder(initial_cash, comission, stock_dfs, Slippage())
     engine = Engine(Trader(), Strategy(), broker_builder)
-    
+
     report = engine.run()
 
     report.print()

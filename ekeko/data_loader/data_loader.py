@@ -14,18 +14,20 @@ class DataLoader(Protocol):
 
 class YfinanceDataLoader:
 
-    def __init__(self, period: str):
+    def __init__(self, period: str | list[str]):
+        if isinstance(period, str):
+            period = [period]
         self.period = period
 
     def load(self, ticker: Ticker) -> pd.DataFrame | None:
         stock = yf.Ticker(ticker)
-        period = self.period
-        stock_df = stock.history(period=period)
 
-        if len(stock_df.index) == 0:
-            return None
+        for p in self.period:
+            stock_df = stock.history(period=p)
+            if len(stock_df.index) != 0:
+                return stock_df
 
-        return stock_df
+        return None
 
     def process(self, stock_df: pd.DataFrame) -> pd.DataFrame:
         return stock_df

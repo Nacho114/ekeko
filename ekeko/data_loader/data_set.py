@@ -31,7 +31,7 @@ class Dataset:
 
         stock_dfs = dict()
 
-        with alive_bar(len(tickers), bar="squares", title="Loading dfs") as bar:
+        with alive_bar(len(tickers), bar="halloween", title="Loading dfs") as bar:
             for ticker in tickers:
                 stock_df = self.data_loader.load(ticker)
                 if stock_df is not None:
@@ -52,7 +52,7 @@ class YfDataset:
         self,
         tickers: list[Ticker],
         ticker_screener: TickerScreener,
-        period: str,
+        period: str | list[str],
     ):
         self.tickers = tickers
         self.ticker_screener = ticker_screener
