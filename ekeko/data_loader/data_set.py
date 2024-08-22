@@ -1,5 +1,5 @@
 from pathlib import Path
-from alive_progress import alive_bar
+from tqdm.autonotebook import tqdm
 
 from ekeko.backtrader.screener import TickerScreener
 from ekeko.core.types import Stock_dfs, Ticker
@@ -31,15 +31,13 @@ class Dataset:
 
         stock_dfs = dict()
 
-        with alive_bar(len(tickers), bar="halloween", title="Loading dfs") as bar:
-            for ticker in tickers:
-                stock_df = self.data_loader.load(ticker)
-                if stock_df is not None:
-                    stock_df = self.data_loader.process(stock_df)
-                    stock_dfs[ticker] = stock_df
-                else:
-                    self.logger.add_ticker_without_df(ticker)
-                bar()
+        for ticker in tqdm(tickers, desc="Loading dfs"):
+            stock_df = self.data_loader.load(ticker)
+            if stock_df is not None:
+                stock_df = self.data_loader.process(stock_df)
+                stock_dfs[ticker] = stock_df
+            else:
+                self.logger.add_ticker_without_df(ticker)
 
         self.logger.print()
 

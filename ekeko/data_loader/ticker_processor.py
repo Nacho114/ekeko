@@ -1,6 +1,6 @@
 from pathlib import Path
+from tqdm.autonotebook import tqdm
 
-from alive_progress import alive_bar
 from ekeko.backtrader.screener import TickerScreener
 import os
 
@@ -18,11 +18,9 @@ class TickerProcessor:
         tickers = self.tickers
         screened_tickers = []
 
-        with alive_bar(len(tickers), bar="bubbles", title="Loading ticker data") as bar:
-            for ticker in tickers:
-                if self.ticker_screener.passes_screen(ticker):
-                    screened_tickers.append(ticker)
-                bar()
+        for ticker in tqdm(tickers, desc="Applying screener"):
+            if self.ticker_screener.passes_screen(ticker):
+                screened_tickers.append(ticker)
 
         return screened_tickers
 

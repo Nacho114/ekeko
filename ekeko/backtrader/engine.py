@@ -1,5 +1,5 @@
 from typing import Protocol
-from alive_progress import alive_bar
+from tqdm.autonotebook import tqdm
 import pandas as pd
 
 from ekeko.backtrader.report import Report, ReportBuilder
@@ -72,16 +72,14 @@ class Engine:
 
     def run(self) -> Report:
 
-        with alive_bar(len(self.time_index), bar="fish", title="Fishing...") as bar:
-            for date in self.time_index:
-                orders = []
+        for date in tqdm(self.time_index, desc="Fishing ><> ~ ><>"):
+            orders = []
 
-                for ticker, signal_df in self.signal_dfs.items():
-                    new_orders = self.__get_orders(date, ticker, signal_df)
-                    orders += new_orders
+            for ticker, signal_df in self.signal_dfs.items():
+                new_orders = self.__get_orders(date, ticker, signal_df)
+                orders += new_orders
 
-                self.broker.update(orders, date)
-                bar()
+            self.broker.update(orders, date)
 
         report_builder = ReportBuilder(
             self.broker.account, self.signal_dfs, self.stock_dfs
