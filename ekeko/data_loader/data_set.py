@@ -55,9 +55,7 @@ class YfDataset:
         self.tickers = tickers
         self.ticker_screener = ticker_screener
         self.data_loader = YfinanceDataLoader(period)
-        self.dataset = Dataset(
-            self.tickers, self.ticker_screener, self.data_loader
-        )
+        self.dataset = Dataset(self.tickers, self.ticker_screener, self.data_loader)
 
     def set_cached_tickers(self, path: Path):
         self.dataset.set_cached_tickers(path)

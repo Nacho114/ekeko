@@ -15,7 +15,11 @@ class TickerScreener(Protocol):
 class YfinanceTickerSceener:
 
     def __init__(
-        self, marketCapMin: int = 0, marketCapMax: int = sys.maxsize, volumeMin: int = 0, minTimeSinceFirstTrade: int = 0
+        self,
+        marketCapMin: int = 0,
+        marketCapMax: int = sys.maxsize,
+        volumeMin: int = 0,
+        minTimeSinceFirstTrade: int = 0,
     ):
         self.marketCapMin = marketCapMin
         self.marketCapMax = marketCapMax
@@ -52,7 +56,7 @@ class YfinanceTickerSceener:
         volume = stock_info["volume"]
         if volume < self.volumeMin:
             return False
-        
+
         firstTradeDate = stock_info["firstTradeDateEpochUtc"]
         numberOfMonthsSinceFirstTrade = self.__time_passed(firstTradeDate)
         if numberOfMonthsSinceFirstTrade < self.minTimeSinceFirstTrade:
@@ -60,7 +64,5 @@ class YfinanceTickerSceener:
 
         return True
 
-
     def info(self) -> str:
-        return f'marketcap_range_{self.marketCapMin}-{self.marketCapMax}_volume_min_{self.volumeMin}_min_time_since_first_trade_{self.minTimeSinceFirstTrade}'
-
+        return f"marketcap_range_{self.marketCapMin}-{self.marketCapMax}_volume_min_{self.volumeMin}_min_time_since_first_trade_{self.minTimeSinceFirstTrade}"

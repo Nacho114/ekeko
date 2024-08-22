@@ -42,8 +42,8 @@ class TickerProcessor:
         return screened_tickers
 
     def set_cached(self, path: Path):
-        tickers_info = f'num_tickers_{len(self.tickers)}_'
-        self.path = path / Path(tickers_info+self.ticker_screener.info()+'.txt')
+        tickers_info = f"num_tickers_{len(self.tickers)}_"
+        self.path = path / Path(tickers_info + self.ticker_screener.info() + ".txt")
 
     def load(self) -> list[Ticker]:
         if self.path:

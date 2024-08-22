@@ -220,7 +220,11 @@ class Account:
     def add_transaction(self, transaction: Transaction):
         if self.value_df.loc[transaction.execution_date, "cash"] + transaction.cost < 0:
             cash = self.value_df.loc[transaction.execution_date, "cash"]
-            raise ValueError(str(f'Transaction cost {transaction.cost} exceeds cash {cash}. Negative cash balance not supported.'))
+            raise ValueError(
+                str(
+                    f"Transaction cost {transaction.cost} exceeds cash {cash}. Negative cash balance not supported."
+                )
+            )
 
         self.value_df.loc[transaction.execution_date, "cash"] += transaction.cost
 
