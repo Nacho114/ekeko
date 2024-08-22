@@ -15,10 +15,6 @@ from ekeko.data_loader import YfDataset
 from ekeko.core import Ticker, Date, Number
 
 import pandas as pd
-import yfinance as yf
-
-from ekeko.data_loader.ticker_loader import TickerList
-
 
 class Strategy:
     def __init__(self):
@@ -99,7 +95,7 @@ class Slippage:
 
 if __name__ == "__main__":
 
-    dataset = YfDataset(TickerList(["GPS", "CAVA", "OTLY"]), YfinanceTickerSceener(), period="2y")
+    dataset = YfDataset(["GPS", "CAVA", "OTLY"], YfinanceTickerSceener(), period="2y")
     dataset.set_cached_tickers(Path("./hello_world.txt"))
     stock_dfs = dataset.load()
 

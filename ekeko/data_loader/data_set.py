@@ -2,29 +2,29 @@ from pathlib import Path
 from alive_progress import alive_bar
 
 from ekeko.backtrader.screener import TickerScreener
-from ekeko.core.types import Stock_dfs
+from ekeko.core.types import Stock_dfs, Ticker
 from ekeko.data_loader.data_loader import DataLoader, YfinanceDataLoader
-from ekeko.data_loader.ticker_loader import TickerLoader, TickerReader
+from ekeko.data_loader.ticker_loader import TickerProcessor
 
 
 class Dataset:
 
     def __init__(
         self,
-        ticker_loader: TickerLoader,
+        tickers: list[Ticker],
         ticker_sceener: TickerScreener,
         data_loader: DataLoader,
     ):
 
         self.data_loader = data_loader
-        self.ticker_reader = TickerReader(ticker_loader, ticker_sceener)
+        self.ticker_processor = TickerProcessor(tickers, ticker_sceener)
 
     def set_cached_tickers(self, path: Path):
-        self.ticker_reader.set_cached(path)
+        self.ticker_processor.set_cached(path)
 
     def load(self) -> Stock_dfs:
 
-        tickers = self.ticker_reader.load()
+        tickers = self.ticker_processor.load()
 
         stock_dfs = dict()
 
@@ -43,15 +43,15 @@ class YfDataset:
 
     def __init__(
         self,
-        ticker_loader: TickerLoader,
+        tickers: list[Ticker],
         ticker_screener: TickerScreener,
         period: str,
     ):
-        self.ticker_loader = ticker_loader
+        self.tickers = tickers
         self.ticker_screener = ticker_screener
         self.data_loader = YfinanceDataLoader(period)
         self.dataset = Dataset(
-            self.ticker_loader, self.ticker_screener, self.data_loader
+            self.tickers, self.ticker_screener, self.data_loader
         )
 
     def set_cached_tickers(self, path: Path):

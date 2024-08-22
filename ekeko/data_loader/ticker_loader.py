@@ -1,4 +1,3 @@
-from typing import Protocol
 from pathlib import Path
 
 from alive_progress import alive_bar
@@ -8,27 +7,15 @@ import os
 from ekeko.core.types import Ticker
 
 
-class TickerLoader(Protocol):
+class TickerProcessor:
 
-    def load(self) -> list[Ticker]: ...
-
-class TickerList:
-
-    def __init__(self, tickers: list[Ticker]):
+    def __init__(self, tickers: list[Ticker], ticker_sceener: TickerScreener):
         self.tickers = tickers
-
-    def load(self) -> list[Ticker]:
-        return self.tickers
-
-class TickerReader:
-
-    def __init__(self, ticker_loader: TickerLoader, ticker_sceener: TickerScreener):
-        self.ticker_loader = ticker_loader
         self.ticker_screener = ticker_sceener
         self.path: None | Path = None
 
     def __load(self) -> list[Ticker]:
-        tickers = self.ticker_loader.load()
+        tickers = self.tickers
         screened_tickers = []
 
         with alive_bar(len(tickers), bar="bubbles", title="Loading ticker data") as bar:
