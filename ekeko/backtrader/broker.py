@@ -219,12 +219,10 @@ class Account:
 
     def add_transaction(self, transaction: Transaction):
         if self.value_df.loc[transaction.execution_date, "cash"] + transaction.cost < 0:
-            cash = self.value_df.loc[transaction.execution_date, "cash"]
-            raise ValueError(
-                str(
-                    f"Transaction cost {transaction.cost} exceeds cash {cash}. Negative cash balance not supported."
-                )
+            print(
+                f"Droped transaction {transaction.order.ticker} on {transaction.execution_date}. Not enough funds"
             )
+            return
 
         self.value_df.loc[transaction.execution_date, "cash"] += transaction.cost
 
