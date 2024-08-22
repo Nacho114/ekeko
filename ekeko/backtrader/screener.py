@@ -9,6 +9,8 @@ class TickerScreener(Protocol):
 
     def passes_screen(self, ticker: Ticker) -> bool: ...
 
+    def info(self) -> str: ...
+
 
 class YfinanceTickerSceener:
 
@@ -54,3 +56,8 @@ class YfinanceTickerSceener:
             return False
 
         return True
+
+
+    def info(self) -> str:
+        return f'marketcap_range_{self.marketCapMin}-{self.marketCapMax}_volume_min_{self.volumeMin}_min_time_since_first_trade_{self.minTimeSinceFirstTrade}'
+
