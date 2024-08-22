@@ -107,17 +107,20 @@ class Trader:
             # be appropriate
 
             quantity = account.get_cash(date) * 0.1 / stock_row.loc['Close']
+            cost = quantity * stock_row.loc['Close']
 
-            order = Order(
-                InstrumentType.STOCK,
-                ticker,
-                quantity,
-                OrderType.MARKET,
-                OrderAction.BUY,
-                date,
-            )
+            if account.get_cash(date) > cost:
 
-            orders.append(order)
+                order = Order(
+                    InstrumentType.STOCK,
+                    ticker,
+                    quantity,
+                    OrderType.MARKET,
+                    OrderAction.BUY,
+                    date,
+                )
+
+                orders.append(order)
 
         if signal.loc["exit"]:
             for p in open_positions:

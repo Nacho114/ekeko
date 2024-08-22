@@ -87,16 +87,19 @@ class Engine:
                 lambda ticker: self.__get_orders(date, ticker)
             )
 
-            with Pool(processes=config.num_processors) as pool:
-                orders = list(
-                    tqdm(
-                        pool.imap(get_orders, tickers),
-                        total=len(tickers),
-                        desc=f"Throwing net on {date}",
-                    )
-                )
+            # with Pool(processes=config.num_processors) as pool:
+            #     orders = list(
+            #         tqdm(
+            #             pool.imap(get_orders, tickers),
+            #             total=len(tickers),
+            #             desc=f"Throwing net on {date}",
+            #         )
+            #     )
 
-            orders = self.__flatten(orders)
+            # orders = self.__flatten(orders)
+
+            for ticker in tickers:
+                orders += self.__get_orders(date, ticker)
 
             self.broker.update(orders, date)
 
