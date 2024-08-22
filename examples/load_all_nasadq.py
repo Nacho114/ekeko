@@ -46,7 +46,7 @@ marketCapMax = int(20*1e9)
 volumeMin = int(2*1e5)
 minTimeSinceFirstTrade = 12
 
-ekeko.config.set_num_processors(6)
+ekeko.config.set_num_processors(1)
 
 screener = YfinanceTickerSceener(marketCapMin, marketCapMax, volumeMin, minTimeSinceFirstTrade)
 dataset = YfDataset(tickers[:200], screener, period="2y")

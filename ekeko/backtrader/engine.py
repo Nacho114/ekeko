@@ -1,9 +1,12 @@
 from typing import Protocol
 from tqdm.autonotebook import tqdm
+from multiprocess import Pool
 import pandas as pd
+from typing import Callable
 
 from ekeko.backtrader.report import Report, ReportBuilder
 from ekeko.core import Ticker, Date, Stock_dfs
+from ekeko.config import config
 from ekeko.backtrader.broker import BrokerBuilder, Order, Position, Account
 
 
@@ -55,11 +58,12 @@ class Engine:
 
         return signal_dfs
 
-    def __get_orders(self, date: Date, ticker: Ticker, signal_df: pd.DataFrame):
+    def __get_orders(self, date: Date, ticker: Ticker) -> list[Order]:
+        signal_df = self.signal_dfs[ticker]
         orders = []
         if date in signal_df.index:
             signal = signal_df.loc[date]
-            stock_row = self.stock_dfs[ticker].loc[date]
+            stock_row = signal_df.loc[date]
             open_positions = [
                 p
                 for p in self.broker.account.positions
@@ -70,14 +74,23 @@ class Engine:
             )
         return orders
 
+    def __flatten(self, xss: list) -> list:
+        return [x for xs in xss for x in xs]
+
     def run(self) -> Report:
 
         for date in tqdm(self.time_index, desc="Fishing ><> ~ ><>"):
-            orders = []
+            tickers = self.signal_dfs.keys()
+            orders: list[Order] = []
 
-            for ticker, signal_df in self.signal_dfs.items():
-                new_orders = self.__get_orders(date, ticker, signal_df)
-                orders += new_orders
+            get_orders: Callable[[Ticker], list[Order]] = (
+                lambda ticker: self.__get_orders(date, ticker)
+            )
+
+            with Pool(processes=config.num_processors) as pool:
+                orders = list(pool.imap(get_orders, tickers))
+
+            orders = self.__flatten(orders)
 
             self.broker.update(orders, date)
 

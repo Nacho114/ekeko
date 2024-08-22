@@ -1,4 +1,5 @@
 from pathlib import Path
+import ekeko
 from ekeko.backtrader.broker import (
     Account,
     BrokerBuilder,
@@ -94,6 +95,8 @@ class Slippage:
 
 
 if __name__ == "__main__":
+
+    ekeko.config.set_num_processors(6)
 
     dataset = YfDataset(["GPS", "CAVA", "AFJK"], YfinanceTickerSceener(), period="2y")
     # dataset.set_cached_tickers(Path("./examples/cached/"))
