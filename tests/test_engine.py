@@ -106,5 +106,5 @@ def test_engine():  # Test cases
     broker_builder = BrokerBuilder(initial_cash, comission, stock_dfs, Slippage())
     engine = Engine(Trader(), Strategy(), broker_builder)
 
-    # report = engine.run()
-    # report.print()
+    report = engine.run()
+    report.print()

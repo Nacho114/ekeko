@@ -121,9 +121,15 @@ class OrderProcessor:
         return cost, execution_price
 
     def value_at(self, order: Order, date: Date) -> Number:
-        value = self.stock_dfs.get_value_at_close(order, date)
-        sign = 1 if order.is_buy else -1
-        return sign * to_number(value) * order.quantity
+        if order.instrument_type == InstrumentType.STOCK:
+            stock_value = self.stock_dfs.get_value_at_close(order, date)
+            value = stock_value * order.quantity
+            if order.is_buy:
+                return value
+            if order.is_sell:
+                return -value
+
+        raise Exception(f"Not defined for {type(order.order_type)}")
 
 
 @dataclass
