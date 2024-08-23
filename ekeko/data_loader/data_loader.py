@@ -24,10 +24,11 @@ class YfinanceDataLoader:
 
         for p in self.period:
             stock_df = stock.history(period=p)
-            if len(stock_df.index) != 0:
-                return stock_df
 
-        return None
+            if stock_df.empty:
+                return None
+
+            return stock_df
 
     def process(self, stock_df: pd.DataFrame) -> pd.DataFrame:
         return stock_df

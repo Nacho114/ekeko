@@ -122,7 +122,8 @@ class OrderProcessor:
 
     def value_at(self, order: Order, date: Date) -> Number:
         value = self.stock_dfs.get_value_at_close(order, date)
-        return to_number(value) * order.quantity
+        sign = 1 if order.is_buy else -1
+        return sign * to_number(value) * order.quantity
 
 
 @dataclass
@@ -216,6 +217,17 @@ class Account:
     def get_cash(self, date: Date) -> Number:
         cash = to_number(self.value_df.loc[date, "cash"])
         return cash
+
+    def get_value(self, date: Date) -> Number:
+        cash = self.get_cash(date)
+        open_position_value = self.value_df.loc[date, "open_position"]
+        value = cash + open_position_value
+        return value
+
+    def get_min_of_cash_and_value(self, date: Date) -> Number:
+        cash = self.get_cash(date)
+        value = self.get_value(date)
+        return min(cash, value)
 
     def add_transaction(self, transaction: Transaction):
         if self.value_df.loc[transaction.execution_date, "cash"] + transaction.cost < 0:

@@ -79,6 +79,8 @@ class ReportBuilder:
         return pd.DataFrame(data)
 
     def __compute_trades_statistics(self, trades: pd.DataFrame) -> dict[str, float]:
+        if trades.empty:
+            return {}
 
         trade_statistics = {}
 
@@ -112,7 +114,6 @@ class ReportBuilder:
         return trade_statistics
 
     def __fill_in_portfolio(self, portfolio: pd.DataFrame) -> pd.DataFrame:
-
         portfolio["value"] = portfolio["cash"] + portfolio["open_position"]
         portfolio["normalized_value"] = portfolio["value"] / portfolio.iloc[0]["cash"]
         portfolio["cummax"] = portfolio["normalized_value"].cummax()
@@ -201,8 +202,11 @@ class Report:
 
         print(self.transactions)
         self.__print_header("Trades")
-        trades = self.trades.sort_values(by="pnl", ascending=False)
-        print(trades)
+        if not self.trades.empty:
+            trades = self.trades.sort_values(by="pnl", ascending=False)
+            print(trades)
+        else:
+            print("No trades done.")
         self.__print_header("Trade stats")
         self.__print_dict(self.trades_statistics)
         self.__print_header("Portfolio stats")
