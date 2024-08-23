@@ -1,12 +1,9 @@
 from typing import Protocol
 from tqdm.autonotebook import tqdm
-from multiprocess import Pool
 import pandas as pd
-from typing import Callable
 
 from ekeko.backtrader.report import Report, ReportBuilder
 from ekeko.core import Ticker, Date, Stock_dfs
-from ekeko.config import config
 from ekeko.backtrader.broker import BrokerBuilder, Order, Position, Account
 
 
@@ -74,29 +71,11 @@ class Engine:
             )
         return orders
 
-    def __flatten(self, xss: list) -> list:
-        return [x for xs in xss for x in xs]
-
     def run(self) -> Report:
 
         for date in tqdm(self.time_index, desc="Fishing ><> ~ ><>"):
             tickers = self.signal_dfs.keys()
             orders: list[Order] = []
-
-            get_orders: Callable[[Ticker], list[Order]] = (
-                lambda ticker: self.__get_orders(date, ticker)
-            )
-
-            # with Pool(processes=config.num_processors) as pool:
-            #     orders = list(
-            #         tqdm(
-            #             pool.imap(get_orders, tickers),
-            #             total=len(tickers),
-            #             desc=f"Throwing net on {date}",
-            #         )
-            #     )
-
-            # orders = self.__flatten(orders)
 
             for ticker in tickers:
                 orders += self.__get_orders(date, ticker)
