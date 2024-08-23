@@ -4,8 +4,7 @@ from dataclasses import dataclass
 from ekeko.backtrader.broker import Account, OrderAction, Trade, Transaction
 from ekeko.core.types import Date, Ticker, Stock_dfs
 
-import random
-
+import ekeko.fun as fun
 from ekeko.plotting.plotting import get_stock_plot_fig, get_equity_curve_fig
 
 
@@ -152,26 +151,6 @@ class ReportBuilder:
         return last_row_dict
 
 
-def print_random_quote():
-    quotes = [
-        "when an inner situation is not made conscious, it happens outside, as Fate. - CJ",
-        "A fool who persists in his folly becomes wise (or rich?). - Blake",
-        "There is a voice that does not use words. Listen. - Rumi"
-        "There is always something trending",
-        "Nature does not hurry, yet everything is accomplished. - Lao Tzu",
-        "Silence is the language of God, all else is poor translation. - Rumi",
-        "The quieter you become, the more you can hear. - Ram Dass",
-        "The great way is not difficult, for those who have no preferences - HHM",
-        "All we have to decide is what to do with the time that is given to us - Gandalf",
-        "Sometimes the best way to solve your problems is to help someone else - Uncle Iroh",
-        "Der Mensch kann zwar tun, was er will, aber er kann nicht wollen, was er will. - Shopenhauer",
-        "Tat tvam asi",
-        "Brahman == Atman",
-        "古池や蛙飛こむ水のをと - 芭蕉",
-    ]
-    print(random.choice(quotes))
-
-
 @dataclass
 class Report:
     transactions: pd.DataFrame
@@ -197,7 +176,9 @@ class Report:
     def print(self):
         pd.set_option("display.max_columns", None)
         self.__print_header("Report")
-        print_random_quote()
+
+        fun.print_random_quote()
+
         self.__print_header("Transactions")
 
         print(self.transactions)

@@ -14,6 +14,7 @@ plotly = "^5.15.0"
 yfinance = "^0.2.40"
 tqdm = "^4.66.5"
 multiprocess = "^0.70.16"
+cowsay = "^6.1"
 
 
 [tool.poetry.group.dev.dependencies]
