@@ -121,7 +121,7 @@ class OrderProcessor:
         return cost, execution_price
 
     def value_at(self, order: Order, date: Date) -> Number:
-        if order.instrument_type == InstrumentType.STOCK:
+        if order.is_stock:
             stock_value = self.stock_dfs.get_value_at_close(order, date)
             value = stock_value * order.quantity
             if order.is_buy:
