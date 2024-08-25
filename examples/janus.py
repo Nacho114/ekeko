@@ -10,7 +10,7 @@ from ekeko.backtrader.broker import (
     Position,
 )
 from ekeko.backtrader.engine import Engine
-from ekeko.backtrader.screener import YfinanceTickerSceener
+from ekeko.backtrader.screener import TrivialScreener, YfinanceTickerSceener
 from ekeko.data_loader import YfDataset
 
 from ekeko.core import Ticker, Date, Number
@@ -97,7 +97,7 @@ if __name__ == "__main__":
 
     ekeko.config.set_num_processors(6)
 
-    dataset = YfDataset(["GPS", "CAVA", "AFJK"], YfinanceTickerSceener(), period="2y")
+    dataset = YfDataset(["GPS", "CAVA", "AFJK"], TrivialScreener(), period="2y")
     # dataset.set_cached_tickers(Path("./examples/cached/"))
     stock_dfs = dataset.load()
 
