@@ -12,6 +12,16 @@ class TickerScreener(Protocol):
     def info(self) -> str: ...
 
 
+class TrivialScreener:
+
+    def passes_screen(self, ticker: Ticker) -> bool:
+        _ = ticker
+        return True
+
+    def info(self) -> str:
+        return "trivial_screener"
+
+
 class YfinanceTickerSceener:
 
     def __init__(

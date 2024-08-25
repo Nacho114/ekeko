@@ -1,6 +1,7 @@
 import cowsay
 import random
 
+
 def print_random_quote():
     quotes = [
         "when an inner situation is not made conscious, it happens outside, as Fate. - CJ",
@@ -19,4 +20,3 @@ def print_random_quote():
         "古池や蛙飛こむ水のをと - 芭蕉",
     ]
     cowsay.cow(random.choice(quotes))
-
