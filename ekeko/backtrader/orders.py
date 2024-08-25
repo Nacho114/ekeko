@@ -6,8 +6,8 @@ from ekeko.core.types import Date, Number, Ticker
 
 # TODO
 
-# Account should have a "can_execute_order"
-# only add transaction if enough money
+# 1. Instrument should be a Protocol, can abstract away pd.data frame
+# 2. Trader should only return relevant info (e.g. cash or account info at the day)
 
 class OrderType:
     MARKET = "MARKET"
