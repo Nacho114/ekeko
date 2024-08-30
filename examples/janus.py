@@ -12,6 +12,7 @@ from ekeko.backtrader.broker import (
 from ekeko.backtrader.engine import Engine
 from ekeko.backtrader.screener import TrivialScreener, YfinanceTickerSceener
 from ekeko.data_loader import YfDataset
+from ekeko.core.signal_type import ENTRY, EXIT, PLOT_COLUMNS
 
 from ekeko.core import Ticker, Date, Number
 
@@ -35,14 +36,14 @@ class Strategy:
         )
 
         # Generate buy and sell signals
-        signal["enter"] = (signal["EMA_short"] > signal["EMA_long"]) & (
+        signal[ENTRY] = (signal["EMA_short"] > signal["EMA_long"]) & (
             signal["EMA_short"].shift(1) <= signal["EMA_long"].shift(1)
         )
-        signal["exit"] = (signal["EMA_short"] < signal["EMA_long"]) & (
+        signal[EXIT] = (signal["EMA_short"] < signal["EMA_long"]) & (
             signal["EMA_short"].shift(1) >= signal["EMA_long"].shift(1)
         )
 
-        signal.attrs["plot_columns"] = ["EMA_short", "EMA_long"]
+        signal.attrs[PLOT_COLUMNS] = ["EMA_short", "EMA_long"]
 
         return signal
 
@@ -61,7 +62,7 @@ class Trader:
         _ = stock_row  # We don't use price action in Market order
         orders = []
 
-        if signal.loc["enter"] and len(open_positions) == 0:
+        if signal.loc[ENTRY] and len(open_positions) == 0:
 
             # Note, if price tomorrow is different, then the quantity might not
             # be appropriate

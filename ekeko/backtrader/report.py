@@ -214,26 +214,13 @@ class Report:
 
         return result_df
 
-    def get_indicators_for_plotting(self, ticker: Ticker) -> list[pd.Series]:
-        signals = self.signal_dfs[ticker]
-        indicators = []
-
-        if "plot_columns" not in signals.attrs:
-            raise ValueError(
-                "plot_columns must be set in the strategy. If no columns are to be plotted, set it to an empty list."
-            )
-
-        for i in signals.attrs["plot_columns"]:
-            indicators.append(signals[i])
-
-        return indicators
 
     def plot_stock(self, ticker: Ticker):
         transactions = self.transactions_for_plotting(ticker)
-        indicators = self.get_indicators_for_plotting(ticker)
+        signal = self.signal_dfs[ticker]
         stock_df = self.stock_dfs[ticker]
         fig = get_stock_plot_fig(
-            stock_df, other_dfs=indicators, transactions=transactions, title=ticker
+            stock_df, signal=signal, transactions=transactions, title=ticker
         )
         fig.show()
 

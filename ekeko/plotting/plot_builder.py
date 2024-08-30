@@ -4,6 +4,7 @@
 A small library to plot financial stock data using Plotly.
 """
 
+from pandas.core.dtypes.inference import Number
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import pandas as pd
@@ -158,17 +159,54 @@ class PlotBuilder:
         )
 
     def add_scatter(
-        self, df: pd.DataFrame | pd.Series, color: str, visible="legendonly"
+        self,
+        df: pd.DataFrame | pd.Series,
+        color: str | None = None,
+        visible="legendonly",
     ):
         """Add scatter plot to the figure."""
+        line = dict(width=2)
+        if not color is None:
+            line = dict(color=color, width=2)
         self.fig.add_trace(
             go.Scatter(
                 x=df.index,
                 y=df,
                 name=df.name,
-                line=dict(color=color, width=2),
+                line=line,
                 visible=visible,
                 hoverinfo="none",
+            )
+        )
+
+    def add_dots(
+        self, df: pd.DataFrame | pd.Series, dots_height: float, name: str, color: str
+    ):
+        """
+        Plots vertical lines for boolean signals in a DataFrame.
+
+        Args:
+        - fig: The plotly figure to which the lines will be added.
+        - df: A pandas DataFrame containing the signal data.
+        - column_name: The name of the column containing boolean values for plotting.
+        - color: The color of the vertical lines (e.g., "green" for entry, "red" for exit).
+        """
+        # Get the indices (dates) where the column has True values
+        signal_dates = df.index[df == True]
+
+        # Add a scatter trace for vertical lines with a common legend entry
+        self.fig.add_trace(
+            go.Scatter(
+                x=signal_dates,
+                y=[dots_height]
+                * len(signal_dates),  # Place at y=1; this is just to create the legend
+                mode="markers",
+                marker=dict(
+                    color=color, size=12, line=dict(width=2, color="DarkSlateGrey")
+                ),
+                showlegend=True,
+                visible="legendonly",
+                name=name,
             )
         )
 

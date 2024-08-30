@@ -1,42 +1,46 @@
 import pandas as pd
+from ekeko.core.signal_type import *
 from ekeko.plotting.plot_builder import PlotBuilder, init_fig_with_style
 import plotly.graph_objects as go
 
 
+def __add_signal(
+    plot_builder: PlotBuilder, signal: pd.DataFrame, entry_exit_height: float
+):
+    signal = signal.copy()
+    assert isinstance(signal.index, pd.DatetimeIndex)
+    signal.index = signal.index.strftime("%Y-%m-%d")
+
+    for col in signal.attrs[PLOT_COLUMNS]:
+        plot_builder.add_scatter(signal[col])
+
+    entry_signal = signal[ENTRY]
+    plot_builder.add_dots(entry_signal, entry_exit_height, color="green", name=ENTRY)
+
+    exit_signal = signal[EXIT]
+    plot_builder.add_dots(exit_signal, entry_exit_height, color="red", name=EXIT)
+
+
+def __add_transactions(plot_builder: PlotBuilder, transactions: pd.DataFrame):
+    transactions = transactions.copy()
+    assert isinstance(transactions.index, pd.DatetimeIndex)
+    transactions.index = transactions.index.strftime("%Y-%m-%d")
+
+    plot_builder.add_transactions(transactions)
+
+
 def get_stock_plot_fig(
     stock_df: pd.DataFrame,
-    other_dfs: list[pd.Series] | None = None,
+    signal: pd.DataFrame | None = None,
     transactions: pd.DataFrame | None = None,
     title="110",
 ):
 
     plot_builder = PlotBuilder(title)
 
-    ## ---------------------------------------------------------
-    # Format time ----------------------------------------------
-    ## ---------------------------------------------------------
-
     stock_df = stock_df.copy()
     assert isinstance(stock_df.index, pd.DatetimeIndex)
     stock_df.index = stock_df.index.strftime("%Y-%m-%d")
-
-    tmp_other_dfs = []
-    if other_dfs:
-        for other_df in other_dfs:
-            other_df = other_df.copy()
-            assert isinstance(other_df.index, pd.DatetimeIndex)
-            other_df.index = other_df.index.strftime("%Y-%m-%d")
-            tmp_other_dfs.append(other_df)
-    other_dfs = tmp_other_dfs
-
-    if transactions is not None:
-        transactions = transactions.copy()
-        assert isinstance(transactions.index, pd.DatetimeIndex)
-        transactions.index = transactions.index.strftime("%Y-%m-%d")
-
-    ## ---------------------------------------------------------
-    ## ---------------------------------------------------------
-    ## ---------------------------------------------------------
 
     plot_builder.add_candlestick(stock_df)
 
@@ -44,16 +48,14 @@ def get_stock_plot_fig(
     close_df.name = stock_df["Close"].name
     plot_builder.add_scatter(close_df, "blue", "legendonly")
 
-    curve_colors = ["yellow", "cyan", "magenta", "orange"]
-    if other_dfs:
-        for idx, other_df in enumerate(other_dfs):
-            color_index = idx % len(curve_colors)
-            plot_builder.add_scatter(other_df, curve_colors[color_index])
+    if isinstance(signal, pd.DataFrame):
+        entry_exit_height = stock_df["Close"].max() * 0.8
+        __add_signal(plot_builder, signal, entry_exit_height)
+
+    if isinstance(transactions, pd.DataFrame):
+        __add_transactions(plot_builder, transactions)
 
     plot_builder.add_volume(stock_df)
-
-    if transactions is not None:
-        plot_builder.add_transactions(transactions)
 
     return plot_builder.build()
 
