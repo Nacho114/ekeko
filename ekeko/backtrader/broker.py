@@ -44,6 +44,7 @@ class Order:
     def is_market(self) -> bool:
         return self.order_type == OrderType.MARKET
 
+
 class OrderBuilder:
 
     def __init__(self, ticker: Ticker, quantity: float):
@@ -72,17 +73,24 @@ class OrderBuilder:
 
     def build(self) -> Order:
         if self.order_type == None:
-            raise Exception('OrderType not defined')
+            raise Exception("OrderType not defined")
         if self.instrument_type == None:
-            raise Exception('InstrumentType not defined')
+            raise Exception("InstrumentType not defined")
         if self.order_action == None:
-            raise Exception('OrderAction not defined')
+            raise Exception("OrderAction not defined")
         if self.date == None:
-            raise Exception('date not defined')
+            raise Exception("date not defined")
         if self.date == None:
-            raise Exception('date not defined')
+            raise Exception("date not defined")
 
-        return Order(self.instrument_type, self.ticker, self.quantity, self.order_type, self.order_action, self.date)
+        return Order(
+            self.instrument_type,
+            self.ticker,
+            self.quantity,
+            self.order_type,
+            self.order_action,
+            self.date,
+        )
 
 
 @dataclass

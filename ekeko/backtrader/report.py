@@ -176,12 +176,12 @@ class Report:
         print()
 
     def with_spy_benchmark(self, period):
-        self.spy_returns = get_returns('SPY', period)
+        self.spy_returns = get_returns("SPY", period)
 
     def __print_benchmark(self):
         if not self.spy_returns == None:
             self.__print_header("Benchmarks")
-            print(f'SPY returns = {self.spy_returns}')
+            print(f"SPY returns = {self.spy_returns}")
 
     def print(self):
         pd.set_option("display.max_columns", None)
@@ -224,7 +224,6 @@ class Report:
         assert isinstance(result_df, pd.DataFrame)
 
         return result_df
-
 
     def plot_stock(self, ticker: Ticker):
         transactions = self.transactions_for_plotting(ticker)

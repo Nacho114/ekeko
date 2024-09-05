@@ -18,7 +18,7 @@ def print_random_quote():
         "Tat tvam asi",
         "Brahman == Atman",
         "古池や蛙飛こむ水のをと - 芭蕉",
-        "Always remember that when you're pointing your finger at someone, you've got three pointing back at yourself. - Unknown", 
+        "Always remember that when you're pointing your finger at someone, you've got three pointing back at yourself. - Unknown",
         "You are special because of who you are - kedar",
     ]
     cowsay.cow(random.choice(quotes))

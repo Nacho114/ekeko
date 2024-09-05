@@ -23,7 +23,7 @@ class Dataset:
         self.ticker_processor = TickerProcessor(tickers, ticker_sceener)
         self.logger = Logger(len(tickers))
 
-    def set_cached_tickers(self, path: Path = Path('/tmp/')):
+    def set_cached_tickers(self, path: Path = Path("/tmp/")):
         self.ticker_processor.set_cached(path)
 
     def __process_ticker(self, ticker):
