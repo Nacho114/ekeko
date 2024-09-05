@@ -362,10 +362,12 @@ class Broker:
     def __update_account(self, date: Date):
         self.account.update_cash_and_open_value(self.order_processor, date)
 
-    def update(self, new_orders: list[Order], date: Date):
+    def add_orders(self, orders: list[Order]):
+        self.order_queue += orders
+
+    def update(self, date: Date):
         self.__process_queue(date)
         self.__update_account(date)
-        self.order_queue += new_orders
 
 
 @dataclass

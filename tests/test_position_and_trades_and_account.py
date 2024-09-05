@@ -50,6 +50,7 @@ def test_broker_buy():  # Test cases
 
     for date in index:
         orders = []
+        broker.update(date)
         for ticker, stock_df in stock_dfs.items():
             if stock_df.loc[date, "Close"] == 1:
                 order = OrderBuilder(ticker, quantity).market().buy().at_date(date).build()
@@ -61,6 +62,6 @@ def test_broker_buy():  # Test cases
                         order = p.get_closing_order(date)
                         orders.append(order)
 
-        broker.update(orders, date)
+        broker.add_orders(orders)
 
     # print(broker.account.value_df)

@@ -77,10 +77,13 @@ class Engine:
             tickers = self.signal_dfs.keys()
             orders: list[Order] = []
 
+            self.broker.update(date)
+
             for ticker in tickers:
                 orders += self.__get_orders(date, ticker)
 
-            self.broker.update(orders, date)
+            self.broker.add_orders(orders)
+
 
         report_builder = ReportBuilder(
             self.broker.account, self.signal_dfs, self.stock_dfs
