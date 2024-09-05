@@ -1,3 +1,4 @@
+from pathlib import Path
 import ekeko
 from ekeko.backtrader.broker import (
     Account,
@@ -89,7 +90,7 @@ if __name__ == "__main__":
     period = "2y"
 
     dataset = YfDataset(["GPS", "CAVA", "AFJK"], TrivialScreener(), period)
-    dataset.set_cached_tickers()
+    dataset.set_cached_tickers(Path('/tmp/'))
     stock_dfs = dataset.load()
 
     comission = 0.01
