@@ -130,7 +130,11 @@ class ReportBuilder:
 
         temp = drawdown[drawdown == 0]
         periods = temp.index[1:].to_pydatetime() - temp.index[:-1].to_pydatetime()
-        max_drawdown_duration = periods.max()
+
+        max_drawdown_duration = 0
+        if len(periods) != 0:
+            max_drawdown_duration = periods.max()
+
         stats["max_drawdown_duration"] = max_drawdown_duration
 
     def __compute_portfolio_statistics(
