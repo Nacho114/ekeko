@@ -1,12 +1,9 @@
-from pathlib import Path
 import ekeko
 from ekeko.backtrader.broker import (
     Account,
     BrokerBuilder,
-    InstrumentType,
     Order,
-    OrderAction,
-    OrderType,
+    OrderBuilder,
     Position,
 )
 from ekeko.backtrader.engine import Engine
@@ -69,15 +66,7 @@ class Trader:
 
             quantity = account.get_cash(date) * 0.1 / stock_row.loc['Close']
 
-            order = Order(
-                InstrumentType.STOCK,
-                ticker,
-                quantity,
-                OrderType.MARKET,
-                OrderAction.BUY,
-                date,
-            )
-
+            order = OrderBuilder(ticker, quantity).market().buy().at_date(date).build()
             orders.append(order)
 
         if signal.loc["exit"]:
