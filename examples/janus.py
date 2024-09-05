@@ -102,6 +102,7 @@ if __name__ == "__main__":
     
     report.with_spy_benchmark(period)
     report.print()
+    report.print_transactions_and_trades()
 
     report.plot_stock("GPS")
     report.plot_equity_curve()

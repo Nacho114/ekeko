@@ -181,7 +181,7 @@ class Report:
     def __print_benchmark(self):
         if not self.spy_returns == None:
             self.__print_header("Benchmarks")
-            print(f"SPY returns = {self.spy_returns}")
+            print(f"SPY returns = {self.spy_returns:.4f}")
 
     def print(self):
         pd.set_option("display.max_columns", None)
@@ -189,6 +189,15 @@ class Report:
 
         fun.print_random_quote()
 
+        self.__print_header("Trade stats")
+        self.__print_dict(self.trades_statistics)
+        self.__print_header("Portfolio stats")
+        self.__print_dict(self.portfolio_statistics)
+        self.__print_benchmark()
+        print()
+
+    def print_transactions_and_trades(self):
+        pd.set_option("display.max_columns", None)
         self.__print_header("Transactions")
 
         print(self.transactions)
@@ -198,11 +207,6 @@ class Report:
             print(trades)
         else:
             print("No trades done.")
-        self.__print_header("Trade stats")
-        self.__print_dict(self.trades_statistics)
-        self.__print_header("Portfolio stats")
-        self.__print_dict(self.portfolio_statistics)
-        self.__print_benchmark()
         print()
 
     def transactions_for_plotting(self, ticker: Ticker) -> pd.DataFrame:
