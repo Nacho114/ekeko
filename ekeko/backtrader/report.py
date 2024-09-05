@@ -97,19 +97,19 @@ class ReportBuilder:
         trade_statistics["num_negative"] = len(negative_pnl)
 
         if trade_statistics["avg_negative_pnl"] != 0:
-            trade_statistics["pain_gain_ratio"] = trade_statistics[
+            trade_statistics["gain_pain_ratio"] = trade_statistics[
                 "avg_positive_pnl"
             ] / abs(trade_statistics["avg_negative_pnl"])
         else:
-            trade_statistics["pain_gain_ratio"] = None
+            trade_statistics["gain_pain_ratio"] = None
 
-        if len(negative_pnl) != 0 and trade_statistics["pain_gain_ratio"]:
+        if len(negative_pnl) != 0 and trade_statistics["gain_pain_ratio"]:
             pos_to_neg_pnl_ratio = len(positive_pnl) / len(negative_pnl)
-            trade_statistics["avg_pain_gain_ratio"] = (
-                trade_statistics["pain_gain_ratio"] * pos_to_neg_pnl_ratio
+            trade_statistics["avg_gain_pain_ratio"] = (
+                trade_statistics["gain_pain_ratio"] * pos_to_neg_pnl_ratio
             )
         else:
-            trade_statistics["avg_pain_gain_ratio"] = None
+            trade_statistics["avg_gain_pain_ratio"] = None
 
         return trade_statistics
 
