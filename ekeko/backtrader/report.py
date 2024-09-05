@@ -1,6 +1,7 @@
 import pandas as pd
 from dataclasses import dataclass
 
+from ekeko.backtrader.benchmark import get_returns
 from ekeko.backtrader.broker import Account, OrderAction, Trade, Transaction
 from ekeko.core.types import Date, Ticker, Stock_dfs
 
@@ -160,6 +161,7 @@ class Report:
     portfolio_statistics: dict[str, float]
     stock_dfs: Stock_dfs
     signal_dfs: Stock_dfs
+    spy_returns: float | None = None
 
     def __print_dict(self, dicto: dict[str, float]):
         for key, value in dicto.items():
@@ -172,6 +174,14 @@ class Report:
         print()
         print("=" * 6, " ", header, " ", "=" * 6)
         print()
+
+    def with_spy_benchmark(self, period):
+        self.spy_returns = get_returns('SPY', period)
+
+    def __print_benchmark(self):
+        if not self.spy_returns == None:
+            self.__print_header("Benchmarks")
+            print(f'SPY returns = {self.spy_returns}')
 
     def print(self):
         pd.set_option("display.max_columns", None)
@@ -192,6 +202,7 @@ class Report:
         self.__print_dict(self.trades_statistics)
         self.__print_header("Portfolio stats")
         self.__print_dict(self.portfolio_statistics)
+        self.__print_benchmark()
         print()
 
     def transactions_for_plotting(self, ticker: Ticker) -> pd.DataFrame:

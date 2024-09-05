@@ -74,8 +74,8 @@ class YfDataset:
         self.data_loader = YfinanceDataLoader(period)
         self.dataset = Dataset(self.tickers, self.ticker_screener, self.data_loader)
 
-    def set_cached_tickers(self, path: Path):
-        self.dataset.set_cached_tickers(path)
+    def set_cached_tickers(self):
+        self.dataset.set_cached_tickers()
 
     def load(self) -> Stock_dfs:
         return self.dataset.load()

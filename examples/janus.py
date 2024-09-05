@@ -97,9 +97,10 @@ class Slippage:
 if __name__ == "__main__":
 
     ekeko.config.set_num_processors(6)
+    period = "2y"
 
-    dataset = YfDataset(["GPS", "CAVA", "AFJK"], TrivialScreener(), period="2y")
-    # dataset.set_cached_tickers(Path("./examples/cached/"))
+    dataset = YfDataset(["GPS", "CAVA", "AFJK"], TrivialScreener(), period)
+    dataset.set_cached_tickers()
     stock_dfs = dataset.load()
 
     comission = 0.01
@@ -109,7 +110,8 @@ if __name__ == "__main__":
     engine = Engine(Trader(), Strategy(), broker_builder)
 
     report = engine.run()
-
+    
+    report.with_spy_benchmark(period)
     report.print()
 
     report.plot_stock("GPS")
