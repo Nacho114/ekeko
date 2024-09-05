@@ -1,10 +1,8 @@
 from ekeko.backtrader.broker import (
     Account,
     BrokerBuilder,
-    InstrumentType,
     Order,
-    OrderAction,
-    OrderType,
+    OrderBuilder,
     Position,
 )
 from ekeko.backtrader.engine import Engine
@@ -48,15 +46,8 @@ class Trader:
             # quantity = account.get_cash(date) * 0.1 / stock_row.loc['Close']
             quantity = 2
 
-            order = Order(
-                InstrumentType.STOCK,
-                ticker,
-                quantity,
-                OrderType.MARKET,
-                OrderAction.SELL,
-                date,
-            )
-
+            order = OrderBuilder(ticker, quantity).market().sell().at_date(date).build()
+            
             orders.append(order)
 
         if signal.loc["buy"]:
@@ -101,4 +92,4 @@ def test_engine():  # Test cases
 
     report = engine.run()
 
-    report.print()
+    # report.print()

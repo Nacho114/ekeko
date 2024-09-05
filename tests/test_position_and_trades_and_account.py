@@ -1,10 +1,6 @@
-import ekeko
 from ekeko.backtrader.broker import (
     Account,
-    Order,
-    InstrumentType,
-    OrderType,
-    OrderAction,
+    OrderBuilder,
     Broker,
 )
 import pandas as pd
@@ -56,14 +52,7 @@ def test_broker_buy():  # Test cases
         orders = []
         for ticker, stock_df in stock_dfs.items():
             if stock_df.loc[date, "Close"] == 1:
-                order = Order(
-                    InstrumentType.STOCK,
-                    ticker,
-                    quantity,
-                    OrderType.MARKET,
-                    OrderAction.BUY,
-                    date,
-                )
+                order = OrderBuilder(ticker, quantity).market().buy().at_date(date).build()
                 orders.append(order)
 
             if stock_df.loc[date, "Close"] == 3:

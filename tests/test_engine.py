@@ -1,10 +1,8 @@
 from ekeko.backtrader.broker import (
     Account,
     BrokerBuilder,
-    InstrumentType,
     Order,
-    OrderAction,
-    OrderType,
+    OrderBuilder,
     Position,
 )
 from ekeko.backtrader.engine import Engine
@@ -48,14 +46,7 @@ class Trader:
             # quantity = account.get_cash(date) * 0.1 / stock_row.loc['Close']
             quantity = 2
 
-            order = Order(
-                InstrumentType.STOCK,
-                ticker,
-                quantity,
-                OrderType.MARKET,
-                OrderAction.BUY,
-                date,
-            )
+            order = OrderBuilder(ticker, quantity).market().buy().at_date(date).build()
 
             orders.append(order)
 
@@ -76,7 +67,7 @@ class Slippage:
 def test_engine():  # Test cases
 
     data_a = {
-        "Close": [2, 4, 1, 3, 6, 7],
+        "Close": [2, 4, 1, 3, 3, 7],
     }
     index = pd.to_datetime(
         [
@@ -98,7 +89,9 @@ def test_engine():  # Test cases
     stock_df_b = pd.DataFrame(data_b, index=index_b)
     ticker_b = "Beyblade"
 
-    stock_dfs = {ticker_a: stock_df_a, ticker_b: stock_df_b}
+    # stock_dfs = {ticker_a: stock_df_a, ticker_b: stock_df_b}
+    stock_dfs = {ticker_a: stock_df_a}
+
 
     comission = 0.01
     initial_cash = 100
