@@ -3,7 +3,7 @@ from enum import Enum
 from dataclasses import dataclass
 import pandas as pd
 
-from typing import Protocol, Self
+from typing import Protocol
 
 
 class OrderAction(Enum):
@@ -55,19 +55,20 @@ class OrderBuilder:
         self.order_action: OrderAction | None = None
         self.date: Date | None = None
 
-    def market(self) -> Self:
+    # Error in colab: ImportError: cannot import name 'Self' from 'typing', so cannot use type for return
+    def market(self):
         self.order_type = OrderType.MARKET
         return self
 
-    def buy(self) -> Self:
+    def buy(self):
         self.order_action = OrderAction.BUY
         return self
 
-    def sell(self) -> Self:
+    def sell(self):
         self.order_action = OrderAction.SELL
         return self
 
-    def at_date(self, date: Date) -> Self:
+    def at_date(self, date: Date):
         self.date = date
         return self
 
