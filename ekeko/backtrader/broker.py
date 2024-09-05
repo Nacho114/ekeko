@@ -216,6 +216,7 @@ class Account:
         self.positions: list[Position] = []
         self.trades: list[Trade] = []
         self.transactions: list[Transaction] = []
+        self.dropped_transaction: list[Transaction] = []
         self.tickers: set[Ticker] = set()
 
         self.last_value_open_position_cache: dict[Ticker, Number] = dict()
@@ -237,9 +238,7 @@ class Account:
 
     def add_transaction(self, transaction: Transaction):
         if self.value_df.loc[transaction.execution_date, "cash"] + transaction.cost < 0:
-            print(
-                f"Droped transaction {transaction.order.ticker} on {transaction.execution_date}. Not enough funds"
-            )
+            self.dropped_transaction.append(transaction)
             return
 
         self.value_df.loc[transaction.execution_date, "cash"] += transaction.cost
