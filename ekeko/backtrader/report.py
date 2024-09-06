@@ -1,7 +1,7 @@
 import pandas as pd
 from dataclasses import dataclass
 
-from ekeko.backtrader.benchmark import get_returns
+from ekeko.backtrader.benchmark import Benchmark
 from ekeko.backtrader.broker import Account, OrderAction, Trade, Transaction
 from ekeko.core.types import Date, Ticker, Stock_dfs
 
@@ -165,27 +165,31 @@ class Report:
     portfolio_statistics: dict[str, float]
     stock_dfs: Stock_dfs
     signal_dfs: Stock_dfs
-    spy_returns: float | None = None
+    benchmark: Benchmark = Benchmark()
 
     def __print_dict(self, dicto: dict[str, float]):
         for key, value in dicto.items():
             if isinstance(value, float):
-                print(f"{key:20} {value:.4f}")
+                print(f"{key:<20} {value:.4f}")
             else:
-                print(f"{key:20} {value}")
+                print(f"{key:<20} {value}")
 
     def __print_header(self, header: str):
         print()
         print("=" * 6, " ", header, " ", "=" * 6)
         print()
 
-    def with_spy_benchmark(self, period):
-        self.spy_returns = get_returns("SPY", period)
-
     def __print_benchmark(self):
-        if not self.spy_returns == None:
+        if self.benchmark.is_not_empty():
             self.__print_header("Benchmarks")
-            print(f"SPY returns = {self.spy_returns:.4f}")
+            returns = self.portfolio_statistics["normalized_value"]
+            self.benchmark.print(returns)
+
+    def add_ticker_to_benchmark(self, ticker: Ticker, period: str):
+        self.benchmark.with_ticker(ticker, period)
+
+    def add_sceener_index_to_benchmark(self, stock_dfs: Stock_dfs):
+        self.benchmark.with_stock_dfs(stock_dfs)
 
     def print(self):
         pd.set_option("display.max_columns", None)
@@ -227,7 +231,7 @@ class Report:
 
         # Select and reorder columns
         result_df = ticker_df[["size", "execution_price", "value", "commission"]]
-        result_df.columns = ["size", "price", "value", "commission"]
+        result_df.columns = ["size", "price", "value", "commission"]  # type: ignore
 
         assert isinstance(result_df, pd.DataFrame)
 
@@ -243,5 +247,5 @@ class Report:
         fig.show()
 
     def plot_equity_curve(self):
-        fig = get_equity_curve_fig(self.portfolio)
+        fig = get_equity_curve_fig(self.portfolio, self.benchmark.get_benchmark_dfs())
         fig.show()

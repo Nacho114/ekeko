@@ -60,7 +60,11 @@ def get_stock_plot_fig(
     return plot_builder.build()
 
 
-def get_equity_curve_fig(portfolio: pd.DataFrame, title="Equity Curve"):
+def get_equity_curve_fig(
+    portfolio: pd.DataFrame,
+    benchmark_dfs: list[pd.DataFrame] = [],
+    title="Equity Curve",
+):
     fig = init_fig_with_style(title)
 
     value = portfolio["normalized_value"]
@@ -75,10 +79,20 @@ def get_equity_curve_fig(portfolio: pd.DataFrame, title="Equity Curve"):
     cummax = portfolio["cummax"]
     fig.add_trace(
         go.Scatter(
-            x=cummax.index,
+            x=value.index,
             y=cummax,
             name=cummax.name,
         )
     )
+
+    for df in benchmark_dfs:
+        fig.add_trace(
+            go.Scatter(
+                x=value.index,
+                y=df,
+                name=df.name,
+                visible="legendonly",
+            )
+        )
 
     return fig

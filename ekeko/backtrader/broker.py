@@ -256,7 +256,7 @@ class Account:
 
     def __init__(self, initial_cash: Number, time_index: pd.DatetimeIndex):
         self.value_df = pd.DataFrame(
-            index=time_index, columns=["cash", "open_position"]
+            index=time_index, columns=["cash", "open_position"]  # type: ignore
         )
         # Set the initial cash balance for the first index
         self.value_df.iloc[0, self.value_df.columns.get_loc("cash")] = initial_cash

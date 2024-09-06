@@ -84,7 +84,6 @@ class Engine:
 
             self.broker.add_orders(orders)
 
-
         report_builder = ReportBuilder(
             self.broker.account, self.signal_dfs, self.stock_dfs
         )

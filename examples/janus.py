@@ -101,9 +101,9 @@ if __name__ == "__main__":
 
     report = engine.run()
     
-    report.with_spy_benchmark(period)
+    report.add_ticker_to_benchmark('QQQ', period)
+    report.add_sceener_index_to_benchmark(stock_dfs)
     report.print()
-    report.print_transactions_and_trades()
+    # report.print_transactions_and_trades()
 
-    report.plot_stock("GPS")
-    report.plot_equity_curve()
+    # report.plot_equity_curve()
