@@ -28,6 +28,11 @@ class YfinanceDataLoader:
             if stock_df.empty:
                 return None
 
+            has_nan = stock_df.isna().any().any() # type: ignore
+            if has_nan:
+                print(f'{ticker} has df, but with nan values.')
+                return None
+
             return stock_df
 
     def process(self, stock_df: pd.DataFrame) -> pd.DataFrame:
