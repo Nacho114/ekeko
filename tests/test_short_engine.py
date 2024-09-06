@@ -67,7 +67,7 @@ class Slippage:
 def test_engine():  # Test cases
 
     data_a = {
-        "Close": [3, 2, 1, 3, 4, 1],
+        "Close": [3, 4, 2, 50, 3, 4, 2, 10],
     }
     index = pd.to_datetime(
         [
@@ -77,6 +77,8 @@ def test_engine():  # Test cases
             "2023-08-04",
             "2023-08-05",
             "2023-08-06",
+            "2023-08-07",
+            "2023-08-08",
         ]
     )
     stock_df_a = pd.DataFrame(data_a, index=index)
@@ -92,4 +94,5 @@ def test_engine():  # Test cases
 
     report = engine.run()
 
-    # report.print()
+    report.print()
+    report.print_transactions_and_trades()

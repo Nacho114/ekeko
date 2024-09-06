@@ -100,5 +100,5 @@ def test_engine():  # Test cases
     engine = Engine(Trader(), Strategy(), broker_builder)
 
     report = engine.run()
-    report.print()
-    report.print_transactions_and_trades()
+    # report.print()
+    # report.print_transactions_and_trades()
