@@ -46,7 +46,8 @@ def get_stock_plot_fig(
 
     close_df = stock_df["Close"]
     close_df.name = stock_df["Close"].name
-    plot_builder.add_scatter(close_df, "blue", "legendonly")
+    blue = '#636efa'
+    plot_builder.add_scatter(close_df, blue, "legendonly")
 
     if isinstance(signal, pd.DataFrame):
         entry_exit_height = stock_df["Close"].max() * 0.8
