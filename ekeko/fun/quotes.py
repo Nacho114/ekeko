@@ -25,6 +25,7 @@ def print_random_quote():
         "You are special because of who you are - kedar",
         "In good times, be conscious of the seed that will bring about bad times. When times are bad, acknowledge the seed that will bring change. - Nacho",
         "一期一会 | one time, one meeting",
+        "Trust in Allah, but tie your camel - Sunan al-Tirmidhi"
     ]
     quotes = smart_quotes + wise_quotes
     cowsay.cow(random.choice(quotes)) # type: ignore
