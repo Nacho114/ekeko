@@ -44,7 +44,7 @@ class Benchmark:
         self.dfs[df.name] = df_close
 
     def with_ticker(self, ticker: Ticker, period: str):
-        stock_df = yf.download(ticker, period=period)
+        stock_df = yf.download(ticker, period=period, multi_level_index=False)
         stock_df = stock_df["Close"]
         stock_df.name = ticker
         self.__with_df(stock_df)
@@ -59,4 +59,17 @@ class Benchmark:
     def print(self, strategy_return: float):
         print(f"{'Us':<16} {strategy_return:.4f}")
         for ticker, returns in self.returns.items():
-            print(f"{ticker:<16} {returns:.4f}")
+            # Check if 'ticker' is a string
+            if isinstance(ticker, str):
+                ticker_str = f"{ticker:<16}"
+            else:
+                ticker_str = str(ticker)
+
+            # Check if 'returns' is a number (int or float)
+            if isinstance(returns, (int, float)):
+                returns_str = f"{returns:.4f}"
+            else:
+                returns_str = str(returns)
+
+            print(f"{ticker_str} {returns_str}")
+
