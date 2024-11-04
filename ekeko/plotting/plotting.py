@@ -10,16 +10,17 @@ def __add_signal(
     signal = signal.copy()
     assert isinstance(signal.index, pd.DatetimeIndex)
     signal.index = signal.index.strftime("%Y-%m-%d")
-
-    for col in signal.attrs[PLOT_COLUMNS]:
+    
+    for col in signal.attrs.get(PLOT_COLUMNS, []):
         plot_builder.add_scatter(signal[col])
+    
+    entry_signal = signal.get(ENTRY, None)
+    if entry_signal:
+        plot_builder.add_dots(entry_signal, entry_exit_height, color="green", name=ENTRY)
 
-    entry_signal = signal[ENTRY]
-    plot_builder.add_dots(entry_signal, entry_exit_height, color="green", name=ENTRY)
-
-    exit_signal = signal[EXIT]
-    plot_builder.add_dots(exit_signal, entry_exit_height, color="red", name=EXIT)
-
+    exit_signal = signal.get(EXIT)
+    if exit_signal:
+        plot_builder.add_dots(exit_signal, entry_exit_height, color="red", name=EXIT)
 
 def __add_transactions(plot_builder: PlotBuilder, transactions: pd.DataFrame):
     transactions = transactions.copy()
