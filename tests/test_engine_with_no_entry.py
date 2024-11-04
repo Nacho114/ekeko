@@ -68,6 +68,10 @@ def test_engine():  # Test cases
 
     data_a = {
         "Close": [2, 4, 1, 3, 3, 7],
+        "Open": [3, 5, 7, 2, 4, 8],
+        "High": [3, 5, 7, 2, 4, 8],
+        "Low": [3, 5, 7, 2, 4, 8],
+        "Volume": [3, 5, 7, 2, 4, 8],
     }
     index = pd.to_datetime(
         [
@@ -104,3 +108,4 @@ def test_engine():  # Test cases
     report.add_ticker_to_benchmark('QQQ', '2y')
     report.print()
     report.print_transactions_and_trades()
+    report.plot_stock(ticker_a)
