@@ -217,10 +217,17 @@ class Report:
             print("No trades done.")
         print()
 
-    def transactions_for_plotting(self, ticker: Ticker) -> pd.DataFrame:
+    def transactions_for_plotting(self, ticker: Ticker) -> pd.DataFrame | None:
         # Filter the dataframe for the given ticker
         df = self.transactions
+
+        if self.transactions.empty:
+            return None
+        
         ticker_df = df[df["ticker"] == ticker].copy()
+
+        if ticker_df.empty:
+            return None
 
         # Convert date to datetime and set as index
         ticker_df["date"] = pd.to_datetime(ticker_df["date"])
