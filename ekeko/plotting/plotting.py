@@ -15,11 +15,11 @@ def __add_signal(
         plot_builder.add_scatter(signal[col])
     
     entry_signal = signal.get(ENTRY, None)
-    if entry_signal:
+    if not entry_signal is None:
         plot_builder.add_dots(entry_signal, entry_exit_height, color="green", name=ENTRY)
 
-    exit_signal = signal.get(EXIT)
-    if exit_signal:
+    exit_signal = signal.get(EXIT, None)
+    if not exit_signal is None:
         plot_builder.add_dots(exit_signal, entry_exit_height, color="red", name=EXIT)
 
 def __add_transactions(plot_builder: PlotBuilder, transactions: pd.DataFrame):
