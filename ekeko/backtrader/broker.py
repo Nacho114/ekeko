@@ -139,16 +139,16 @@ class OrderProcessor:
     def __init__(
         self,
         stock_dfs: Stock_dfs,
-        comission: Number,
+        comission_rate: Number,
         slippage: Slippage,
     ):
         self.stock_dfs = StockDFWrapper(stock_dfs, slippage)
-        self.comission = comission
+        self.comission_rate = comission_rate
 
     def process_order(self, order: Order, date: Date) -> Transaction:
         if order.is_stock:
-            cost, execution_price = self.__transaction_cost(order, date)
-            return Transaction(order, self.comission, execution_price, date, cost)
+            cost, execution_price, comission = self.__transaction_cost(order, date)
+            return Transaction(order, comission, execution_price, date, cost)
 
         raise Exception(f"Not defined for {type(order.instrument_type)}")
 
@@ -162,12 +162,13 @@ class OrderProcessor:
 
         raise Exception(f"Not defined for {type(order.instrument_type)}")
 
-    def __transaction_cost(self, order: Order, date: Date) -> tuple[Number, Number]:
+    def __transaction_cost(self, order: Order, date: Date) -> tuple[Number, Number, Number]:
         execution_price = self.stock_dfs.get_with_slippage(order, date)
         execution_price = to_number(execution_price)
         sign = to_number(-1.0 if order.is_buy else 1.0)
-        cost = (sign * execution_price * order.quantity) - self.comission
-        return cost, execution_price
+        comission = execution_price * order.quantity * self.comission_rate
+        cost = (sign * execution_price * order.quantity) - comission
+        return cost, execution_price, comission
 
     def value_at(self, order: Order, date: Date) -> Number:
         if order.is_stock:
