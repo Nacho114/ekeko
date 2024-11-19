@@ -251,7 +251,7 @@ class Position:
                 raw_relative_gain = opening_transaction.execution_price / closing_transaction.execution_price - 1
 
             # Adjust relative gain to account for commissions
-            commission_adjustment = opening_transaction.comission_rate * (1 + raw_relative_gain)
+            commission_adjustment = (1 + opening_transaction.comission_rate) * (1 + raw_relative_gain)
             relative_gain = raw_relative_gain - commission_adjustment
                         
 >>>>>>> 4107b0c (Added comission rate directly for accuracy in relative_gain calc)
