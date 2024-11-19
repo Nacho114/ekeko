@@ -100,6 +100,7 @@ class OrderBuilder:
 class Transaction:
     order: Order
     comission: Number
+    comission_rate: Number
     execution_price: Number
     execution_date: Date
     cost: Number
@@ -150,7 +151,7 @@ class OrderProcessor:
     def process_order(self, order: Order, date: Date) -> Transaction:
         if order.is_stock:
             cost, execution_price, comission = self.__transaction_cost(order, date)
-            return Transaction(order, comission, execution_price, date, cost)
+            return Transaction(order, comission, self.comission_rate,execution_price, date, cost)
 
         raise Exception(f"Not defined for {type(order.instrument_type)}")
 
@@ -233,8 +234,27 @@ class Position:
             if opening_transaction.order.is_buy:
                 relative_gain = closing_transaction.execution_price / opening_transaction.execution_price - 1
             else:
+<<<<<<< HEAD
                 relative_gain = opening_transaction.execution_price / closing_transaction.execution_price - 1
                 
+||||||| parent of 4107b0c (Added comission rate directly for accuracy in relative_gain calc)
+                raw_relative_gain = opening_transaction.execution_price / closing_transaction.execution_price - 1
+
+            # Calculate commission as a proportion of the opening price
+            commission_rate = opening_transaction.comission / opening_transaction.execution_price
+
+            # Adjust relative gain to account for commissions
+            commission_adjustment = commission_rate * (1 + raw_relative_gain)
+            relative_gain = raw_relative_gain - commission_adjustment
+                        
+=======
+                raw_relative_gain = opening_transaction.execution_price / closing_transaction.execution_price - 1
+
+            # Adjust relative gain to account for commissions
+            commission_adjustment = opening_transaction.comission_rate * (1 + raw_relative_gain)
+            relative_gain = raw_relative_gain - commission_adjustment
+                        
+>>>>>>> 4107b0c (Added comission rate directly for accuracy in relative_gain calc)
             return Trade(
                 opening_transaction,
                 closing_transaction,
