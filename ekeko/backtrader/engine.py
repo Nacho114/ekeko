@@ -5,6 +5,7 @@ import pandas as pd
 from ekeko.backtrader.report import Report, ReportBuilder
 from ekeko.core import Ticker, Date, Stock_dfs
 from ekeko.backtrader.broker import BrokerBuilder, Order, Position, Account
+from ekeko.core.types import to_date
 
 
 class Strategy(Protocol):
@@ -83,6 +84,7 @@ class Engine:
                 orders += self.__get_orders(date, ticker)
 
             self.broker.add_orders(orders)
+            self.broker.add_closing_orders_for_near_expiration_positions(date)
 
         report_builder = ReportBuilder(
             self.broker.account, self.signal_dfs, self.stock_dfs

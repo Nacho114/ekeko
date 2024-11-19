@@ -5,6 +5,8 @@ import pandas as pd
 
 from typing import Protocol
 
+from ekeko.core.types import to_date
+
 
 class OrderAction(Enum):
     BUY = "BUY"
@@ -269,8 +271,6 @@ class Account:
         self.dropped_transaction: list[Transaction] = []
         self.tickers: set[Ticker] = set()
 
-        self.last_value_open_position_cache: dict[Ticker, Number] = dict()
-
     def get_cash(self, date: Date) -> Number:
         cash = to_number(self.value_df.loc[date, "cash"])
         return cash
@@ -322,13 +322,7 @@ class Account:
     def __update_open_position(self, order_processor: OrderProcessor, date: Date):
         value_at_date = 0.0
         for p in self.positions:
-            ticker = p.transaction.order.ticker
-            value = 0.0
-            if order_processor.stock_dfs.has_record(p.transaction.order, date):
-                value = order_processor.value_at(p.transaction.order, date)
-                self.last_value_open_position_cache[ticker] = value
-            else:
-                value = self.last_value_open_position_cache.get(ticker, 0.0)
+            value = order_processor.value_at(p.transaction.order, date)
             value_at_date += value
         self.value_df.loc[date, "open_position"] = value_at_date
 
@@ -348,6 +342,7 @@ class Broker:
         if not slippage:
             slippage = SlippageOnClose()
         self.order_processor = OrderProcessor(stock_dfs, comission, slippage)
+        self.stock_dfs = stock_dfs
 
     def __process_queue(self, date: Date):
         executable_orders = []
@@ -366,10 +361,29 @@ class Broker:
     def add_orders(self, orders: list[Order]):
         self.order_queue += orders
 
+    def add_closing_orders_for_near_expiration_positions(self, date: Date):
+        closing_orders: list[Order] = []
+
+        for position in self.account.positions:
+            ticker = position.transaction.order.ticker
+            stock_data = self.stock_dfs.get(ticker)
+
+            # Proceed only if we have data for the ticker
+            if stock_data is not None:
+                current_index = stock_data.index.get_loc(date)
+                is_second_to_last_day = current_index == len(stock_data.index) - 2
+
+                # If the stock is nearing its last trading day, create a closing order
+                if is_second_to_last_day:
+                    closing_order = position.get_closing_order(date)
+                    closing_orders.append(closing_order)
+
+        self.order_queue += closing_orders
+
+
     def update(self, date: Date):
         self.__process_queue(date)
         self.__update_account(date)
-
 
 @dataclass
 class BrokerBuilder:
