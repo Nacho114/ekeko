@@ -86,6 +86,7 @@ class ReportBuilder:
 
         trade_statistics["total_trades"] = len(trades)
         trade_statistics["avg_pnl"] = trades["pnl"].mean()
+        trade_statistics["median_pnl"] = trades["pnl"].median()
         trade_statistics["avg_duration"] = trades["duration"].mean()
 
         positive_pnl = trades[trades["pnl"] > 0]["pnl"]
