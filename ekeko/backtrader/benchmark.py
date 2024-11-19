@@ -49,7 +49,6 @@ class Benchmark:
         stock_df = loader.load(ticker)
         assert isinstance(stock_df, pd.DataFrame)
         stock_df = stock_df["Close"]
-        assert isinstance(stock_df, pd.DataFrame)
         stock_df.name = ticker
         self.__with_df(stock_df)
 
