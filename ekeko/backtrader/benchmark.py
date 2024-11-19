@@ -2,6 +2,7 @@ import yfinance as yf
 import pandas as pd
 
 from ekeko.core.types import Number, Stock_dfs, Ticker
+from ekeko.data_loader.data_loader import YfinanceDataLoader
 
 
 class ScreenedIndex:
@@ -44,8 +45,11 @@ class Benchmark:
         self.dfs[df.name] = df_close
 
     def with_ticker(self, ticker: Ticker, period: str):
-        stock_df = yf.download(ticker, period=period, multi_level_index=False)
+        loader = YfinanceDataLoader(period)
+        stock_df = loader.load(ticker)
+        assert isinstance(stock_df, pd.DataFrame)
         stock_df = stock_df["Close"]
+        assert isinstance(stock_df, pd.DataFrame)
         stock_df.name = ticker
         self.__with_df(stock_df)
 
