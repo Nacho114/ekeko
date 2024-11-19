@@ -64,4 +64,4 @@ def test_broker_buy():  # Test cases
 
         broker.add_orders(orders)
 
-    # print(broker.account.value_df)
+    print(broker.account.value_df)

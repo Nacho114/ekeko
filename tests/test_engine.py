@@ -44,7 +44,7 @@ class Trader:
             # be appropriate
 
             # quantity = account.get_cash(date) * 0.1 / stock_row.loc['Close']
-            quantity = 2
+            quantity = 1
 
             order = OrderBuilder(ticker, quantity).market().buy().at_date(date).build()
 
@@ -67,29 +67,17 @@ class Slippage:
 def test_engine():  # Test cases
 
     data_a = {
-        "Close": [2, 4, 1, 3, 3, 7],
+        "Close": [2, 4, 1, 3, 5, 7, 2, 10, 3, 7],
     }
-    index = pd.to_datetime(
-        [
-            "2023-08-01",
-            "2023-08-02",
-            "2023-08-03",
-            "2023-08-04",
-            "2023-08-05",
-            "2023-08-06",
-        ]
-    )
+    # Function to generate a datetime index based on "Close" data
+    def generate_datetime_index(data, start_date="2023-01-01"):
+        close_prices = data.get("Close", [])
+        return pd.date_range(start=start_date, periods=len(close_prices), freq='D')
+
+    index = generate_datetime_index(data_a)
     stock_df_a = pd.DataFrame(data_a, index=index)
     ticker_a = "Aurora"
 
-    data_b = {
-        "Close": [4, 2, 1, 6],
-    }
-    index_b = pd.to_datetime(["2023-08-02", "2023-08-03", "2023-08-04", "2023-08-05"])
-    stock_df_b = pd.DataFrame(data_b, index=index_b)
-    ticker_b = "Beyblade"
-
-    # stock_dfs = {ticker_a: stock_df_a, ticker_b: stock_df_b}
     stock_dfs = {ticker_a: stock_df_a}
 
 
@@ -100,5 +88,5 @@ def test_engine():  # Test cases
     engine = Engine(Trader(), Strategy(), broker_builder)
 
     report = engine.run()
-    # report.print()
-    # report.print_transactions_and_trades()
+    report.print()
+    report.print_transactions_and_trades()

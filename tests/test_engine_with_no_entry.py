@@ -108,4 +108,4 @@ def test_engine():  # Test cases
     report.add_ticker_to_benchmark('QQQ', '2y')
     report.print()
     report.print_transactions_and_trades()
-    report.plot_stock(ticker_a)
+    # report.plot_stock(ticker_a)
