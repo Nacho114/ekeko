@@ -234,27 +234,16 @@ class Position:
             if opening_transaction.order.is_buy:
                 relative_gain = closing_transaction.execution_price / opening_transaction.execution_price - 1
             else:
-<<<<<<< HEAD
                 relative_gain = opening_transaction.execution_price / closing_transaction.execution_price - 1
-                
-||||||| parent of 4107b0c (Added comission rate directly for accuracy in relative_gain calc)
-                raw_relative_gain = opening_transaction.execution_price / closing_transaction.execution_price - 1
 
             # Calculate commission as a proportion of the opening price
-            commission_rate = opening_transaction.comission / opening_transaction.execution_price
+            commission_rate = opening_transaction.comission_rate
 
             # Adjust relative gain to account for commissions
-            commission_adjustment = commission_rate * (1 + raw_relative_gain)
-            relative_gain = raw_relative_gain - commission_adjustment
-                        
-=======
-                raw_relative_gain = opening_transaction.execution_price / closing_transaction.execution_price - 1
+            # +1 for the equation and +1 since relative gain is normalized to 0
+            commission_adjustment = commission_rate * (1 + 1 + relative_gain) 
+            relative_gain = relative_gain - commission_adjustment
 
-            # Adjust relative gain to account for commissions
-            commission_adjustment = (1 + opening_transaction.comission_rate) * (1 + raw_relative_gain)
-            relative_gain = raw_relative_gain - commission_adjustment
-                        
->>>>>>> 4107b0c (Added comission rate directly for accuracy in relative_gain calc)
             return Trade(
                 opening_transaction,
                 closing_transaction,
@@ -263,6 +252,7 @@ class Position:
                 pnl_without_comission,
                 relative_gain
             )
+                
 
         raise Exception(f"Not defined for {type(self.transaction.order.order_type)}")
 
@@ -377,6 +367,7 @@ class Broker:
         for order in self.order_queue:
             if self.order_processor.can_execute_order(order, date):
                 executable_orders.append(order)
+
 
         for order in executable_orders:
             transaction = self.order_processor.process_order(order, date)

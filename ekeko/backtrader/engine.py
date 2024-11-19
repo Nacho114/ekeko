@@ -83,7 +83,10 @@ class Engine:
             for ticker in tickers:
                 orders += self.__get_orders(date, ticker)
 
-            self.broker.add_orders(orders)
+            before_last_date = to_date(self.time_index[-2])
+            if date != before_last_date:
+                self.broker.add_orders(orders)
+
             self.broker.add_closing_orders_for_near_expiration_positions(date)
 
         report_builder = ReportBuilder(
