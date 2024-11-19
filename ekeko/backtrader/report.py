@@ -22,6 +22,7 @@ class ReportBuilder:
         transactions = self.__transactions_to_df(self.account.transactions)
         trades = self.__trades_to_df(self.account.trades)
         trade_statistics = self.__compute_trades_statistics(trades)
+        relative_trade_statistics = self.__compute_relative_trade_statistics(trades)
         portfolio = self.__fill_in_portfolio(self.account.value_df)
         portfolio_statistics = self.__compute_portfolio_statistics(portfolio)
 
@@ -29,6 +30,7 @@ class ReportBuilder:
             transactions,
             trades,
             trade_statistics,
+            relative_trade_statistics,
             portfolio,
             portfolio_statistics,
             self.stock_dfs,
@@ -68,6 +70,7 @@ class ReportBuilder:
                 {
                     "ticker": trade.opening_transaction.order.ticker,
                     "pnl": trade.pnl,
+                    "relative_gain": trade.relative_gain,
                     "duration": duration,
                     "opening_date": trade.opening_transaction.execution_date,
                     "closing_date": trade.closing_transaction.execution_date,
@@ -113,6 +116,43 @@ class ReportBuilder:
             trade_statistics["avg_gain_pain_ratio"] = None
 
         return trade_statistics
+
+    def __compute_relative_trade_statistics(self, trades: pd.DataFrame) -> dict[str, float]:
+        if trades.empty:
+            return {}
+
+        relative_trade_statistics = {}
+
+        relative_trade_statistics["total_trades"] = len(trades)
+        relative_trade_statistics["avg_relative_gain"] = trades["relative_gain"].mean()
+        relative_trade_statistics["median_relative_gain"] = trades["relative_gain"].median()
+        relative_trade_statistics["avg_duration"] = trades["duration"].mean()
+
+        positive_gain = trades[trades["relative_gain"] > 0]["relative_gain"]
+        relative_trade_statistics["avg_positive_gain"] = positive_gain.mean()
+
+        negative_gain = trades[trades["relative_gain"] < 0]["relative_gain"]
+        relative_trade_statistics["avg_negative_gain"] = negative_gain.mean()
+        relative_trade_statistics["num_positive"] = len(positive_gain)
+        relative_trade_statistics["num_negative"] = len(negative_gain)
+
+        if relative_trade_statistics["avg_negative_gain"] != 0:
+            relative_trade_statistics["gain_pain_ratio"] = relative_trade_statistics[
+                "avg_positive_gain"
+            ] / abs(relative_trade_statistics["avg_negative_gain"])
+        else:
+            relative_trade_statistics["gain_pain_ratio"] = None
+
+        if len(negative_gain) != 0 and relative_trade_statistics["gain_pain_ratio"]:
+            pos_to_neg_gain_ratio = len(positive_gain) / len(negative_gain)
+            relative_trade_statistics["avg_gain_pain_ratio"] = (
+                relative_trade_statistics["gain_pain_ratio"] * pos_to_neg_gain_ratio
+            )
+        else:
+            relative_trade_statistics["avg_gain_pain_ratio"] = None
+
+        return relative_trade_statistics
+
 
     def __fill_in_portfolio(self, portfolio: pd.DataFrame) -> pd.DataFrame:
         portfolio["value"] = portfolio["cash"] + portfolio["open_position"]
@@ -162,6 +202,7 @@ class Report:
     transactions: pd.DataFrame
     trades: pd.DataFrame
     trades_statistics: dict[str, float]
+    relative_trades_statistics: dict[str, float]
     portfolio: pd.DataFrame
     portfolio_statistics: dict[str, float]
     stock_dfs: Stock_dfs
@@ -200,6 +241,8 @@ class Report:
 
         self.__print_header("Trade stats")
         self.__print_dict(self.trades_statistics)
+        self.__print_header("Relative trade stats")
+        self.__print_dict(self.relative_trades_statistics)
         self.__print_header("Portfolio stats")
         self.__print_dict(self.portfolio_statistics)
         self.__print_benchmark()

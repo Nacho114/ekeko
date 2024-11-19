@@ -191,6 +191,7 @@ class Trade:
     comission: Number
     pnl: Number
     pnl_without_comission: Number
+    relative_gain: Number
 
     def __str__(self) -> str:
         return f"Trade pnl {self.pnl}"
@@ -228,12 +229,19 @@ class Position:
                 pnl *= -1
             pnl_without_comission = pnl * self.transaction.order.quantity
             pnl = pnl_without_comission - comission
+
+            if opening_transaction.order.is_buy:
+                relative_gain = closing_transaction.execution_price / opening_transaction.execution_price - 1
+            else:
+                relative_gain = opening_transaction.execution_price / closing_transaction.execution_price - 1
+                
             return Trade(
                 opening_transaction,
                 closing_transaction,
                 comission,
                 pnl,
                 pnl_without_comission,
+                relative_gain
             )
 
         raise Exception(f"Not defined for {type(self.transaction.order.order_type)}")
