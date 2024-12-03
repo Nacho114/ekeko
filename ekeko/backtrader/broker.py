@@ -184,6 +184,8 @@ class OrderProcessor:
 
         raise Exception(f"Not defined for {type(order.order_type)}")
 
+    def has_record(self, order: Order, date: Date) -> bool:
+        return self.stock_dfs.has_record(order, date)
 
 @dataclass
 class Trade:
@@ -288,6 +290,7 @@ class Account:
         self.transactions: list[Transaction] = []
         self.dropped_transaction: list[Transaction] = []
         self.tickers: set[Ticker] = set()
+        self.cached_df_values: dict[Ticker, Number] = {}
 
     def get_cash(self, date: Date) -> Number:
         cash = to_number(self.value_df.loc[date, "cash"])
@@ -340,7 +343,13 @@ class Account:
     def __update_open_position(self, order_processor: OrderProcessor, date: Date):
         value_at_date = 0.0
         for p in self.positions:
-            value = order_processor.value_at(p.transaction.order, date)
+            ticker = p.transaction.order.ticker
+            if order_processor.has_record(p.transaction.order, date):
+                value = order_processor.value_at(p.transaction.order, date)
+                self.cached_df_values[ticker] = value
+            else:
+                value = self.cached_df_values[ticker]
+
             value_at_date += value
         self.value_df.loc[date, "open_position"] = value_at_date
 
@@ -388,7 +397,7 @@ class Broker:
             stock_data = self.stock_dfs.get(ticker)
 
             # Proceed only if we have data for the ticker
-            if stock_data is not None:
+            if stock_data is not None and date in stock_data.index:
                 current_index = stock_data.index.get_loc(date)
                 is_second_to_last_day = current_index == len(stock_data.index) - 2
 
