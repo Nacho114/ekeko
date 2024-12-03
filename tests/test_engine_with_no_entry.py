@@ -105,7 +105,7 @@ def test_engine():  # Test cases
 
 
     report = engine.run()
-    report.add_ticker_to_benchmark('QQQ', '2y')
-    report.print()
-    report.print_transactions_and_trades()
+    # report.add_ticker_to_benchmark('QQQ', '2y')
+    # report.print()
+    # report.print_transactions_and_trades()
     # report.plot_stock(ticker_a)

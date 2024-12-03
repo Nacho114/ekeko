@@ -64,38 +64,63 @@ class Slippage:
         return stock_df_row.loc["Close"]
 
 
-def test_engine():  # Test cases
-
-    data_a = {
-        "Close": [2, 4, 1, 3, 5, 7, 2, 10, 20],
+def assert_account_values(engine):
+    # Define the expected values
+    expected_data = {
+        "cash": [100.0, 100.0, 100.0, 96.0, 96.0, 96.0, 96.0, 100.0, 100.0],
+        "open_position": [0.0, 0.0, 0.0, 4.0, 4.0, 4.0, 4.0, 0.0, 0.0],
+        "value": [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+        "normalized_value": [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+        "cummax": [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
     }
-    # Function to generate a datetime index based on "Close" data
-    def generate_datetime_index(data, start_date="2023-01-01"):
-        close_prices = data.get("Close", [])
-        return pd.date_range(start=start_date, periods=len(close_prices), freq='D')
 
-    index = generate_datetime_index(data_a)
-    stock_df_a = pd.DataFrame(data_a, index=index)
+    # Convert to a DataFrame with the appropriate index
+    expected_df = pd.DataFrame(
+        expected_data,
+        index=pd.date_range(start="2023-01-01", periods=len(expected_data["cash"]), freq="D")
+    )
+
+    # Ensure both DataFrames have consistent dtypes
+    expected_df = expected_df.astype("float64")
+    actual_df = engine.broker.account.value_df.astype("float64")
+
+    # Assert that the actual and expected DataFrames are equal
+    pd.testing.assert_frame_equal(actual_df, expected_df)
+
+def test_engine_with_missing_dates():  # Test cases
+
+    # Stock A has data for all dates
+    data_a = {
+        "Close": [1, 1, 1, 1, 1, 1, 1, 1, 1],
+    }
+    index_a = pd.date_range(start="2023-01-01", periods=len(data_a["Close"]), freq='D')
+    stock_df_a = pd.DataFrame(data_a, index=index_a)
     ticker_a = "Aurora"
 
+    # Stock B has data for only certain dates
     data_b = {
-        "Close": [2, 4, 1],
+        "Close": [2, 4, 4, 4],  # Signal generated at index 2, executed at index 4
     }
-
-    index_b = generate_datetime_index(data_b)
+    index_b = pd.to_datetime(["2023-01-02", "2023-01-04", "2023-01-06", "2023-01-08"])
     stock_df_b = pd.DataFrame(data_b, index=index_b)
     ticker_b = "Baltigo"
 
-
     stock_dfs = {ticker_a: stock_df_a, ticker_b: stock_df_b}
 
-
-    comission = 0.01
+    # Parameters
+    comission = 0
     initial_cash = 100
 
+    # Define the broker, engine, and components
     broker_builder = BrokerBuilder(initial_cash, comission, stock_dfs, Slippage())
     engine = Engine(Trader(), Strategy(), broker_builder)
 
+    # Run the engine and generate the report
     report = engine.run()
+
+    # Output the results for validation
     # report.print()
     # report.print_transactions_and_trades()
+
+    assert_account_values(engine)
+

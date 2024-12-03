@@ -94,5 +94,5 @@ def test_engine():  # Test cases
 
     report = engine.run()
 
-    report.print()
-    report.print_transactions_and_trades()
+    # report.print()
+    # report.print_transactions_and_trades()
