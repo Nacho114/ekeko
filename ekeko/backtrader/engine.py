@@ -1,4 +1,3 @@
-from typing import Protocol
 from tqdm.autonotebook import tqdm
 import pandas as pd
 
@@ -7,11 +6,26 @@ from ekeko.core import Ticker, Date, Stock_dfs
 from ekeko.backtrader.broker import BrokerBuilder, Order, Position, Account
 from ekeko.core.types import to_date
 
+from typing import Any, Dict, Protocol
+from abc import ABC, abstractmethod
 
 class Strategy(Protocol):
+    params: Dict[str, Any]
 
-    def evaluate(self, stock_df: pd.DataFrame) -> pd.DataFrame: ...
+    def set_params(self, **kwargs): ...
+    def evaluate(self, stock_df) -> Any: ...
 
+class BaseStrategy(ABC):
+    params: Dict[str, Any] = {}
+
+    def set_params(self, **kwargs):
+        """Generic implementation to update parameters."""
+        self.params.update(kwargs)
+
+    @abstractmethod
+    def evaluate(self, stock_df: pd.DataFrame) -> pd.DataFrame:
+        """To be implemented by specific strategies."""
+        pass
 
 class Trader(Protocol):
 
