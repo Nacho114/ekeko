@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ekeko"
-version = "0.1.2"
+version = "0.1.3"
 description = "Proprietary trading platform of the Aurora fund"
 authors = ["Nacho114 <17376073+Nacho114@users.noreply.github.com>"]
 readme = "README.md"
