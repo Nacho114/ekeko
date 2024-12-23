@@ -17,7 +17,6 @@ class EkekoConfig:
 # Create a global instance
 config = EkekoConfig()
 
-
 multiprocessing.set_start_method("spawn", force=True)
 
 def set_num_processors(value: int):

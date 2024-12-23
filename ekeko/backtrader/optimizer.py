@@ -1,9 +1,12 @@
 from itertools import product
 from typing import Dict, List, Tuple, Callable, Any
 import pandas as pd
+from multiprocessing import Pool
+from tqdm import tqdm
 
 from ekeko.backtrader.engine import Engine, Strategy, Trader
 from ekeko.backtrader.report import Report
+from ekeko.config import config
 
 # Optimizer Class
 class Optimizer:
@@ -47,16 +50,13 @@ class Optimizer:
             for values in product(*self.param_grid.values())
         ]
 
-        results: List[Tuple[Dict, Report]] = []
-
         print(f"Testing {len(param_combinations)} parameter combinations...")
 
-        for params in param_combinations:
-            result = self._evaluate(params)
-            results.append(result)
+        # Use multiprocessing to evaluate the parameter combinations
+        with Pool(processes=config.num_processors) as pool:
+            results = list(tqdm(pool.imap(self._evaluate, param_combinations), total=len(param_combinations)))
 
         return OptimizationReport(results, self.param_grid)
-
 
 
 class OptimizationReport:

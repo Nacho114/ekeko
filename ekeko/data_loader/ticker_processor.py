@@ -1,6 +1,6 @@
 from pathlib import Path
 from tqdm.autonotebook import tqdm
-from multiprocessing import Pool, set_start_method
+from multiprocessing import Pool
 import os
 
 from ekeko.backtrader.screener import TickerScreener
