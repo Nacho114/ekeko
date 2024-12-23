@@ -1,6 +1,6 @@
 from pathlib import Path
 from tqdm.autonotebook import tqdm
-from multiprocess import Pool
+from multiprocessing import Pool 
 from ekeko.config import config
 
 from ekeko.backtrader.screener import TickerScreener
@@ -18,7 +18,6 @@ class Dataset:
         ticker_sceener: TickerScreener,
         data_loader: DataLoader,
     ):
-
         self.data_loader = data_loader
         self.ticker_processor = TickerProcessor(tickers, ticker_sceener)
         self.logger = Logger(len(tickers))
@@ -26,7 +25,7 @@ class Dataset:
     def set_cached_tickers(self, path: Path):
         self.ticker_processor.set_cached(path)
 
-    def __process_ticker(self, ticker):
+    def _process_ticker(self, ticker):
         stock_df = self.data_loader.load(ticker)
         if stock_df is not None:
             stock_df = self.data_loader.process(stock_df)
@@ -35,16 +34,16 @@ class Dataset:
             return ticker, None
 
     def load(self) -> Stock_dfs:
-
         tickers = self.ticker_processor.load()
         self.logger.update_tickers_that_passed_screen(len(tickers))
 
         stock_dfs = dict()
 
+        # Multiprocessing with spawn method
         with Pool(processes=config.num_processors) as pool:
             results = list(
                 tqdm(
-                    pool.imap(self.__process_ticker, tickers),
+                    pool.imap(self._process_ticker, tickers),
                     total=len(tickers),
                     desc="Loading dfs",
                 )
