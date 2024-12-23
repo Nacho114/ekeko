@@ -81,7 +81,7 @@ class Slippage:
 
 if __name__ == "__main__":
 
-    ekeko.config.set_num_processors(6)
+    ekeko.config.set_num_processors(-1)
     period = "2y"
 
     dataset = YfDataset(["CAVA"], TrivialScreener(), period)
