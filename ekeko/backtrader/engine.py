@@ -88,8 +88,10 @@ class Engine:
 
     def run(self) -> Report:
 
-        for date in tqdm(self.time_index, desc="Fishing ><> ~ ><>"):
-            tickers = self.signal_dfs.keys()
+        tickers = self.signal_dfs.keys()
+        dates = self.time_index if len(tickers) < 5 else tqdm(self.time_index, desc="Fishing ><> ~ ><>")
+
+        for date in dates:
             orders: list[Order] = []
 
             self.broker.update(date)
