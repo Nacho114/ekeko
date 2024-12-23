@@ -1,4 +1,3 @@
-from pathlib import Path
 import ekeko
 from ekeko.backtrader.broker import (
     Account,
@@ -14,6 +13,7 @@ from ekeko.data_loader import YfDataset
 from ekeko.core.signal_type import ENTRY, EXIT, PLOT_COLUMNS
 from ekeko.core import Ticker, Date, Number
 import pandas as pd
+import numpy as np
 
 
 class Strategy(BaseStrategy):
@@ -94,9 +94,9 @@ if __name__ == "__main__":
 
     # Define parameter grid
     param_grid = {
-        "short_window": [10, 16],
-        "long_window": [20, 30],
-        "exit_threshold": [0.03, 0.05]
+        "short_window": list(range(10, 17)),
+        "long_window": list(range(20, 30)),
+        "exit_threshold": np.arange(0.03, 0.06, 0.01).tolist()
     }
 
     # Run the optimizer
