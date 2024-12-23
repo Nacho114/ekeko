@@ -116,6 +116,6 @@ if __name__ == "__main__":
 
 
     r = report.grid_results[0][1]
-    print(r.print())
+    r.print()
     
 
