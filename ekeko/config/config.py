@@ -10,7 +10,6 @@ class EkekoConfig:
 
     @num_processors.setter
     def num_processors(self, value: int):
-        assert value > 0
         self._num_processors = value
 
 

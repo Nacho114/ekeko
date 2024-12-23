@@ -1,6 +1,6 @@
 from pathlib import Path
 from tqdm.autonotebook import tqdm
-from multiprocessing import Pool 
+from joblib import Parallel, delayed
 from ekeko.config import config
 
 from ekeko.backtrader.screener import TickerScreener
@@ -11,7 +11,6 @@ from ekeko.data_loader.ticker_processor import TickerProcessor
 
 
 class Dataset:
-
     def __init__(
         self,
         tickers: list[Ticker],
@@ -39,15 +38,10 @@ class Dataset:
 
         stock_dfs = dict()
 
-        # Multiprocessing with spawn method
-        with Pool(processes=config.num_processors) as pool:
-            results = list(
-                tqdm(
-                    pool.imap(self._process_ticker, tickers),
-                    total=len(tickers),
-                    desc="Loading dfs",
-                )
-            )
+        # Parallel processing with joblib
+        results = Parallel(n_jobs=config.num_processors)(
+            delayed(self._process_ticker)(ticker) for ticker in tqdm(tickers, desc="Loading dfs")
+        )
 
         for ticker, df in results:
             if df is not None:
@@ -61,7 +55,6 @@ class Dataset:
 
 
 class YfDataset:
-
     def __init__(
         self,
         tickers: list[Ticker],
@@ -78,3 +71,4 @@ class YfDataset:
 
     def load(self) -> Stock_dfs:
         return self.dataset.load()
+

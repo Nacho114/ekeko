@@ -1,7 +1,7 @@
 from itertools import product
 from typing import Dict, List, Tuple, Callable, Any
 import pandas as pd
-from multiprocessing import Pool
+from joblib import Parallel, delayed
 from tqdm import tqdm
 
 from ekeko.backtrader.engine import Engine, Strategy, Trader
@@ -52,9 +52,10 @@ class Optimizer:
 
         print(f"Testing {len(param_combinations)} parameter combinations...")
 
-        # Use multiprocessing to evaluate the parameter combinations
-        with Pool(processes=config.num_processors) as pool:
-            results = list(tqdm(pool.imap(self._evaluate, param_combinations), total=len(param_combinations)))
+        # Use joblib for parallel evaluation
+        results = Parallel(n_jobs=config.num_processors)(
+            delayed(self._evaluate)(params) for params in tqdm(param_combinations)
+        )
 
         return OptimizationReport(results, self.param_grid)
 
@@ -124,3 +125,4 @@ class OptimizationReport:
 
         print(f"\nMax Metric Value: {max_metric_value:.4f} at Parameters: {best_params}")
         return best_params, best_report
+
