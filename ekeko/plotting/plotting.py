@@ -10,17 +10,20 @@ def __add_signal(
     signal = signal.copy()
     assert isinstance(signal.index, pd.DatetimeIndex)
     signal.index = signal.index.strftime("%Y-%m-%d")
-    
+
     for col in signal.attrs.get(PLOT_COLUMNS, []):
         plot_builder.add_scatter(signal[col])
-    
+
     entry_signal = signal.get(ENTRY, None)
     if not entry_signal is None:
-        plot_builder.add_dots(entry_signal, entry_exit_height, color="green", name=ENTRY)
+        plot_builder.add_dots(
+            entry_signal, entry_exit_height, color="green", name=ENTRY
+        )
 
     exit_signal = signal.get(EXIT, None)
     if not exit_signal is None:
         plot_builder.add_dots(exit_signal, entry_exit_height, color="red", name=EXIT)
+
 
 def __add_transactions(plot_builder: PlotBuilder, transactions: pd.DataFrame):
     transactions = transactions.copy()
@@ -47,7 +50,7 @@ def get_stock_plot_fig(
 
     close_df = stock_df["Close"]
     close_df.name = stock_df["Close"].name
-    blue = '#636efa'
+    blue = "#636efa"
     plot_builder.add_scatter(close_df, blue, "legendonly")
 
     if isinstance(signal, pd.DataFrame):

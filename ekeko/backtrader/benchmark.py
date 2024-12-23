@@ -75,4 +75,3 @@ class Benchmark:
                 returns_str = str(returns)
 
             print(f"{ticker_str} {returns_str}")
-

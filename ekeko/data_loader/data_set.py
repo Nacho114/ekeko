@@ -40,7 +40,8 @@ class Dataset:
 
         # Parallel processing with joblib
         results = Parallel(n_jobs=config.num_processors)(
-            delayed(self._process_ticker)(ticker) for ticker in tqdm(tickers, desc="Loading dfs")
+            delayed(self._process_ticker)(ticker)
+            for ticker in tqdm(tickers, desc="Loading dfs")
         )
 
         for ticker, df in results:
@@ -71,4 +72,3 @@ class YfDataset:
 
     def load(self) -> Stock_dfs:
         return self.dataset.load()
-

@@ -9,11 +9,13 @@ from ekeko.core.types import to_date
 from typing import Any, Dict, Protocol
 from abc import ABC, abstractmethod
 
+
 class Strategy(Protocol):
     params: Dict[str, Any]
 
     def set_params(self, **kwargs): ...
     def evaluate(self, stock_df) -> Any: ...
+
 
 class BaseStrategy(ABC):
     params: Dict[str, Any] = {}
@@ -26,6 +28,7 @@ class BaseStrategy(ABC):
     def evaluate(self, stock_df: pd.DataFrame) -> pd.DataFrame:
         """To be implemented by specific strategies."""
         pass
+
 
 class Trader(Protocol):
 
@@ -89,7 +92,11 @@ class Engine:
     def run(self) -> Report:
 
         tickers = self.signal_dfs.keys()
-        dates = self.time_index if len(tickers) < 5 else tqdm(self.time_index, desc="Fishing ><> ~ ><>")
+        dates = (
+            self.time_index
+            if len(tickers) < 5
+            else tqdm(self.time_index, desc="Fishing ><> ~ ><>")
+        )
 
         for date in dates:
             orders: list[Order] = []

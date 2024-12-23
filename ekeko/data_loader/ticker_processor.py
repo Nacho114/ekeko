@@ -22,7 +22,8 @@ class TickerProcessor:
         """Screen tickers using joblib for parallel processing."""
         # Use joblib's Parallel for processing tickers in parallel
         results = Parallel(n_jobs=config.num_processors)(
-            delayed(self._screen_ticker)(ticker) for ticker in tqdm(self.tickers, desc="Applying screener")
+            delayed(self._screen_ticker)(ticker)
+            for ticker in tqdm(self.tickers, desc="Applying screener")
         )
 
         # Filter out None values
@@ -61,4 +62,3 @@ class TickerProcessor:
             tickers = self.__load()
 
         return tickers
-

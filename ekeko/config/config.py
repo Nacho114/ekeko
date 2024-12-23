@@ -1,5 +1,6 @@
 import multiprocessing
 
+
 class EkekoConfig:
     def __init__(self):
         self._num_processors = 2
@@ -17,6 +18,7 @@ class EkekoConfig:
 config = EkekoConfig()
 
 multiprocessing.set_start_method("spawn", force=True)
+
 
 def set_num_processors(value: int):
     config.num_processors = value

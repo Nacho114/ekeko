@@ -8,8 +8,10 @@ from ekeko.backtrader.engine import Engine, Strategy, Trader
 from ekeko.backtrader.report import Report
 from ekeko.config import config
 
+
 # Optimizer Class
 class Optimizer:
+
     def __init__(
         self,
         strategy: Strategy,
@@ -61,7 +63,11 @@ class Optimizer:
 
 
 class OptimizationReport:
-    def __init__(self, optimization_results: List[Tuple[Dict, Report]], param_grid: Dict[str, List]) -> None:
+    def __init__(
+        self,
+        optimization_results: List[Tuple[Dict, Report]],
+        param_grid: Dict[str, List],
+    ) -> None:
         """
         Args:
             optimization_results: List of parameter combinations and their corresponding Reports.
@@ -70,7 +76,9 @@ class OptimizationReport:
         self.grid_results = optimization_results
         self.param_grid = param_grid
 
-    def get_metric_matrix(self, metric_fn: Callable[[Any], float] | None = None) -> pd.DataFrame:
+    def get_metric_matrix(
+        self, metric_fn: Callable[[Any], float] | None = None
+    ) -> pd.DataFrame:
         """
         Generate a matrix (DataFrame) for a given metric function.
 
@@ -82,7 +90,7 @@ class OptimizationReport:
             A pandas DataFrame representing the metric across all combinations.
         """
         if metric_fn is None:
-            metric_fn = lambda report: report.portfolio_statistics['percentage_growth']
+            metric_fn = lambda report: report.portfolio_statistics["percentage_growth"]
 
         # Flatten results and extract metrics
         records = []
@@ -97,7 +105,9 @@ class OptimizationReport:
         result_df = pd.DataFrame(records)
         return result_df
 
-    def get_max_metric_report(self, metric_fn: Callable[[Any], float] | None = None) -> Tuple[Dict, Any]:
+    def get_max_metric_report(
+        self, metric_fn: Callable[[Any], float] | None = None
+    ) -> Tuple[Dict, Any]:
         """
         Find the parameters and Report corresponding to the maximum value of the given metric.
 
@@ -109,7 +119,7 @@ class OptimizationReport:
             A tuple containing the parameters and the corresponding Report.
         """
         if metric_fn is None:
-            metric_fn = lambda report: report.portfolio_statistics['percentage_growth']
+            metric_fn = lambda report: report.portfolio_statistics["percentage_growth"]
 
         # Evaluate the metric and find the maximum
         best_params = None
@@ -123,6 +133,7 @@ class OptimizationReport:
                 best_params = params
                 best_report = report
 
-        print(f"\nMax Metric Value: {max_metric_value:.4f} at Parameters: {best_params}")
+        print(
+            f"\nMax Metric Value: {max_metric_value:.4f} at Parameters: {best_params}"
+        )
         return best_params, best_report
-

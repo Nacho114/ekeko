@@ -30,4 +30,4 @@ def print_random_quote():
         "Today is the tomorrow you worried about yesterday - Dale Carnegie",
     ]
     quotes = smart_quotes + wise_quotes
-    cowsay.cow(random.choice(quotes)) # type: ignore
+    cowsay.cow(random.choice(quotes))  # type: ignore

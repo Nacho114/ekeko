@@ -151,7 +151,9 @@ class OrderProcessor:
     def process_order(self, order: Order, date: Date) -> Transaction:
         if order.is_stock:
             cost, execution_price, comission = self.__transaction_cost(order, date)
-            return Transaction(order, comission, self.comission_rate,execution_price, date, cost)
+            return Transaction(
+                order, comission, self.comission_rate, execution_price, date, cost
+            )
 
         raise Exception(f"Not defined for {type(order.instrument_type)}")
 
@@ -165,7 +167,9 @@ class OrderProcessor:
 
         raise Exception(f"Not defined for {type(order.instrument_type)}")
 
-    def __transaction_cost(self, order: Order, date: Date) -> tuple[Number, Number, Number]:
+    def __transaction_cost(
+        self, order: Order, date: Date
+    ) -> tuple[Number, Number, Number]:
         execution_price = self.stock_dfs.get_with_slippage(order, date)
         execution_price = to_number(execution_price)
         sign = to_number(-1.0 if order.is_buy else 1.0)
@@ -186,6 +190,7 @@ class OrderProcessor:
 
     def has_record(self, order: Order, date: Date) -> bool:
         return self.stock_dfs.has_record(order, date)
+
 
 @dataclass
 class Trade:
@@ -234,16 +239,24 @@ class Position:
             pnl = pnl_without_comission - comission
 
             if opening_transaction.order.is_buy:
-                relative_gain = closing_transaction.execution_price / opening_transaction.execution_price - 1
+                relative_gain = (
+                    closing_transaction.execution_price
+                    / opening_transaction.execution_price
+                    - 1
+                )
             else:
-                relative_gain = opening_transaction.execution_price / closing_transaction.execution_price - 1
+                relative_gain = (
+                    opening_transaction.execution_price
+                    / closing_transaction.execution_price
+                    - 1
+                )
 
             # Calculate commission as a proportion of the opening price
             commission_rate = opening_transaction.comission_rate
 
             # Adjust relative gain to account for commissions
             # +1 for the equation and +1 since relative gain is normalized to 0
-            commission_adjustment = commission_rate * (1 + 1 + relative_gain) 
+            commission_adjustment = commission_rate * (1 + 1 + relative_gain)
             relative_gain = relative_gain - commission_adjustment
 
             return Trade(
@@ -252,9 +265,8 @@ class Position:
                 comission,
                 pnl,
                 pnl_without_comission,
-                relative_gain
+                relative_gain,
             )
-                
 
         raise Exception(f"Not defined for {type(self.transaction.order.order_type)}")
 
@@ -377,7 +389,6 @@ class Broker:
             if self.order_processor.can_execute_order(order, date):
                 executable_orders.append(order)
 
-
         for order in executable_orders:
             transaction = self.order_processor.process_order(order, date)
             self.account.add_transaction(transaction)
@@ -408,10 +419,10 @@ class Broker:
 
         self.order_queue += closing_orders
 
-
     def update(self, date: Date):
         self.__process_queue(date)
         self.__update_account(date)
+
 
 @dataclass
 class BrokerBuilder:
