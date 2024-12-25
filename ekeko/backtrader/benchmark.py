@@ -1,4 +1,3 @@
-import yfinance as yf
 import pandas as pd
 
 from ekeko.core.types import Number, Stock_dfs, Ticker

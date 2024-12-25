@@ -8,9 +8,7 @@ from ekeko.backtrader.engine import Engine, Strategy, Trader
 from ekeko.backtrader.report import Report
 from ekeko.config import config
 
-
-# Optimizer Class
-class Optimizer:
+class GridSearch:
 
     def __init__(
         self,
@@ -45,7 +43,7 @@ class Optimizer:
 
         return params, report
 
-    def optimize(self) -> "OptimizationReport":
+    def optimize(self) -> "GridSearchReport":
         """Perform grid search over the parameter grid."""
         param_combinations: List[Dict] = [
             dict(zip(self.param_grid.keys(), values))
@@ -59,10 +57,10 @@ class Optimizer:
             delayed(self._evaluate)(params) for params in tqdm(param_combinations)
         )
 
-        return OptimizationReport(results, self.param_grid)
+        return GridSearchReport(results, self.param_grid)
 
 
-class OptimizationReport:
+class GridSearchReport:
     def __init__(
         self,
         optimization_results: List[Tuple[Dict, Report]],
